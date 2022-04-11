@@ -122,8 +122,7 @@ redirect_domain: "www.example.com"
 * What domain will this server use to send outgoing emails? We just need to look legit to other email servers.
 * Configure any unused subdomain and add a DNS A record pointing to this server.
 * If left unconfigured, then server notifications, email backups and wordpress update alerts will not be configured.
-
-> Use the same config for all sites on the server.
+* Use the same config for all sites on the server.
 
 ```yaml
 outgoing_email_domain: "mailman.example.com"
@@ -167,7 +166,7 @@ wordpress_version: "5.9.3"
 
 ## FAQs
 
-#### What notifications are sent?
+#### What email notifications are sent?
 
 The recipient configured in `notify_email` will be notified when the following scenarios occur:
 * When the server disk space is 80% filled
