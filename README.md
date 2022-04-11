@@ -4,6 +4,10 @@
 
 > *🚀 Deploy wordpress sites to $5 servers in under a minute 🚀*
 
+[Install](#install) | [Deploy a site](#deploy-a-site) | [Configuration](#configuration) | [FAQs](#faqs)
+
+-----
+
 In 2022, Wordpress is still really good for a lot of sites. The new Gutenberg full-site editor is ⭐️⭐️⭐️⭐️⭐️. I hope this project helps you, just like it helps me host my sites.
 
 * 😍 Easy to configure
