@@ -4,7 +4,7 @@
 
 > *🚀 Deploy wordpress sites to $5 servers in under a minute 🚀*
 
-In 2022, Wordpress is still really good for a lot of sites. The new Gutenberg full-site editor makes Wordpress a hard-to-beat option for self-hosting any site. I hope this project helps you, just like it helps me host my sites.
+In 2022, Wordpress is still really good for a lot of sites. The new Gutenberg full-site editor is ⭐️⭐️⭐️⭐️⭐️. I hope this project helps you, just like it helps me host my sites.
 
 * 😍 Easy to configure
 * 💰 Budget-friendly setup - works just fine on a $5 server
@@ -15,6 +15,12 @@ In 2022, Wordpress is still really good for a lot of sites. The new Gutenberg fu
 * 🧯 Spam protection with fail2ban
 * 💪 Firewall protection with `ufw`
 * 👪 Supports multiple sites per server
+
+**This project has been tested on:**
+
+* [DigitalOcean](https://www.digitalocean.com/) - Starts at $6/month
+* [Vultr](https://www.vultr.com/) - Starts at $2.5/month (look for the "Regular Performance" VPS)
+* [AWS LightSail VPS](https://aws.amazon.com/lightsail/) - Starts at $3.5/month
 
 ## Install
 
@@ -30,33 +36,19 @@ pip3 install pipenv
 # Install python dependencies
 pipenv install
 
-# Start the python virtual environment
+# Start a python virtual environment
 pipenv shell
 ```
 
-> This project uses Ansible, hence the python dependencies.
-
 ## Deploy a site
 
-> Everytime you deploy a site ensure to start a shell using `pipenv shell`
+### Step-0: Create an Ubuntu server on your cloud provider
 
-#### Step-0: Create a server anywhere and add SSH key to agent
+Ensure to choose SSH key as the authentication method and add the SSH key to your local SSH key agent.
 
-Create a server running Ubuntu on any cloud provider. Ensure to choose SSH key as the authentication method.
-
-Assuming you can login to the new server with the `mykey` SSH key, add the key to the SSH agent for the next steps.
 ```
-# Add the key to your SSH Agent for further use.
-# This will have to be done on every system restart :)
 ssh-add ~/.ssh/mykey
 ```
-
-This project has been tested on:
-* [DigitalOcean](https://www.digitalocean.com/) - Starts at $6/month
-* [Vultr](https://www.vultr.com/) - Starts at $2.5/month (look for the "Regular Performance" VPS)
-* [AWS LightSail VPS](https://aws.amazon.com/lightsail/) - Starts at $3.5/month
-
-> Whatever server/provider you use, beware of additional bandwidth costs if your site is famous or redditted.
 
 ### Step-1: Add a server to the `hosts` file
 
@@ -77,7 +69,7 @@ Copy the sample configuration to create a config for your site.
 cp sites/sample.yml sites/mysite.yml
 ```
 
-Refer to the configuration section below for options.
+Refer to the [configuration section](#configuration) below for details about options.
 
 ### Step-3: Deploy
 
@@ -98,82 +90,90 @@ This email is coming from the server you just setup. You will get a backup of yo
 
 The supported configuration for sites is listed below. Create a file with your site's nickname like `sites/mysite.yml` with the below configuration.
 
-```
-# Edit the configuration options below to pick something that works best for your site.
-#
-# For details about configuration options, please check the readme on GitHub readme.
-# https://github.com/HashNuke/wordpress-deploy
+#### `server` (mandatory)
 
-### Servers
-#
-# Which server to use for this site? Check the "hosts" file in the repository.
-# Default value uses "personal"
-#
+Pick a server name from the `hosts` file you created earlier.
+
+```yaml
 server: personal
-
-### Domains
-#
-# Mandatory. No default value.
-# This is where you will access your site.
-# Ensure to assign add appropriate DNS records to the domain.
-# For more information checkout the project readme.
-#
-domain: "example.com"
-
-### Redirect domain
-#
-# Not mandatory. No default value.
-# This option is to support redirection from another domain to the primary domain.
-# Ensure to add appropriate DNS records to the domain.
-#
-redirect_domain: "www.example.com"
-
-### Email domain
-#
-# What email will this server use to send outgoing emails?
-# Configure any unused subdomain and add a DNS A record pointing to this server.
-# We just need to look legit to other email servers.
-# Use the same config for all sites on the server.
-#
-outgoing_email_domain: "mailman.example.com"
-
-### Notification email
-#
-# Not mandatory. No default value.
-# If the blog server goes down and cannot be restarted, this address will receive a notification.
-# If this is not set, then server notifications will not be configured.
-#
-notify_email: "your-email@example.com"
-
-### Backup email
-#
-# Not mandatory. No default value.
-# This is the address to which site backups are sent. If not configured, then backups will not be sent.
-#
-backup_email: "your-email@example.com"
-
-### Backup interval
-#
-# Not mandatory. If backup email is configured, then default backup interval is every Sunday 9am IST.
-# This is the address to which site backups are sent. If not configured, then backups will not be configured.
-#
-# Examples:
-# Use "0 9 * * *" for backups everyday at 9am IST.
-# Use "0 9 * * 0" for backups every Sunday at 9am IST 
-#
-# Refer to https://crontab.guru/ to choose a valid cron schedule.
-#
-backup_interval: "0 9 * * 0"
-
-### Wordpress version
-#
-# By default, the latest wordpress version is installed.
-# If notifications are enabled, you will receive an email when there is a new wordpress update.
-#
-wordpress_version: "latest"
 ```
+
+#### `domain` (mandatory)
+
+* This is where you will access your site.
+* Ensure to assign add appropriate DNS records to the domain.
+
+```yaml
+domain: "example.com"
+```
+
+#### `redirect_domain`
+
+* This option is to support redirection from another domain to the primary domain.
+* This is especially useful if you have a `www.example.com` that you also want to work as `example.com`.
+* If you specify this option, ensure to add an appropriate DNS record.
+
+```yaml
+redirect_domain: "www.example.com"
+```
+
+#### `outgoing_email_domain`
+
+* What domain will this server use to send outgoing emails? We just need to look legit to other email servers.
+* Configure any unused subdomain and add a DNS A record pointing to this server.
+* If left unconfigured, then server notifications, email backups and wordpress update alerts will not be configured.
+
+> Use the same config for all sites on the server.
+
+```yaml
+outgoing_email_domain: "mailman.example.com"
+```
+
+#### `notify_email`
+
+* Email address to send backups, wordpress alerts, server alerts, etc.
+* IF not set, the above functionality will not work.
+
+```yaml
+notify_email: "your-email@example.com"
+```
+
+#### `backup_interval`
+
+* Default backup interval is every Sunday 9am IST.
+* You can set it to "off" if you do not want backups to be emailed.
+* Examples:
+  * Use `0 9 * * *` for backups everyday at 9am IST.
+  * Use `0 9 * * 0` for backups every Sunday at 9am IST.
+* Refer to https://crontab.guru/ to choose a valid cron schedule.
+
+```yaml
+backup_interval: "0 9 * * 0"
+```
+
+#### `wordpress_version`
+
+* By default, the latest wordpress version is installed.
+* If notifications are enabled, you will receive an email when there is a new wordpress update.
+
+```yaml
+# Use latest
+wordpress_version: "latest"
+
+# Or set it to a specific version
+wordpress_version: "5.9.3"
+```
+
 
 ## FAQs
+
+#### What notifications are sent?
+
+The recipient configured in `notify_email` will be notified when the following scenarios occur:
+* When the server disk space is 80% filled
+* When the server memory is at 80% utilization
+* When nginx or fastcgi is down
+* When there is a new wordpress version
 
 #### What will the backup email look like?
 
@@ -198,3 +198,7 @@ Here are some options:
 
 Once a week, your server will email you about any sites that are running on outdated wordpress versions.
 Instructions for updating wordpress versions are on the TODO page.
+
+#### Why is monit used instead of systemd?
+
+Need server and process monitoring, along with email notifications if something bad happens.

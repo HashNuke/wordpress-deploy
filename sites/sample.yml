@@ -1,0 +1,70 @@
+### wordpress-deploy config
+#
+# Edit the configuration options below to pick something that works best for your site.
+#
+# For details about configuration options, please check the readme on GitHub readme.
+# https://github.com/HashNuke/wordpress-deploy
+#
+# If you come to love this project, tweet to @HashNuke. It would light up my day.
+#
+
+### Server (mandatory)
+#
+# Which server to use for this site? Check the "hosts" file in the repository.
+# Default value uses "personal"
+#
+server: personal
+
+### Domain (mandatory)
+#
+# Mandatory. No default value.
+# This is where you will access your site.
+# Ensure to assign add appropriate DNS records to the domain.
+# For more information checkout the project readme.
+#
+domain: "example.com"
+
+### Redirect domain
+#
+# Not mandatory. No default value.
+# This option is to support redirection from another domain to the primary domain.
+# Ensure to add appropriate DNS records to the domain.
+#
+redirect_domain: "www.example.com"
+
+### Email domain
+#
+# What email will this server use to send outgoing emails?
+# Configure any unused subdomain and add a DNS A record pointing to this server.
+# We just need to look legit to other email servers.
+# Use the same config for all sites on the server.
+#
+outgoing_email_domain: "mailman.example.com"
+
+### Notification email
+#
+# Not mandatory. No default value.
+# If the server goes down and cannot be restarted, this address will receive a notification.
+# If this is not set, then server notifications will not be configured.
+#
+notify_email: "your-email@example.com"
+
+### Backup interval
+#
+# Not mandatory. If backup email is configured, then default backup interval is every Sunday 9am IST.
+# This is the address to which site backups are sent. If not configured, then backups will not be configured.
+#
+# Examples:
+# Use "0 9 * * *" for backups everyday at 9am IST.
+# Use "0 9 * * 0" for backups every Sunday at 9am IST 
+#
+# Refer to https://crontab.guru/ to choose a valid cron schedule.
+#
+backup_interval: "0 9 * * 0"
+
+### Wordpress version
+#
+# By default, the latest wordpress version is installed.
+# If notifications are enabled, you will receive an email when there is a new wordpress update.
+#
+wordpress_version: "latest"
