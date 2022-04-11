@@ -18,12 +18,7 @@ In 2022, Wordpress is still really good for a lot of sites. The new Gutenberg fu
 * 🧯 Spam protection with fail2ban
 * 💪 Firewall protection with `ufw`
 * ⚡️ Pre-installs [WP Super Cache](https://wordpress.org/plugins/wp-super-cache/) for speed optimization
-
-**This project has been tested on:**
-
-* [DigitalOcean](https://www.digitalocean.com/) - Starts at $6/month
-* [Vultr](https://www.vultr.com/) - Starts at $2.5/month (look for the "Regular Performance" VPS)
-* [AWS LightSail VPS](https://aws.amazon.com/lightsail/) - Starts at $3.5/month
+* 🧪 Tested on [DigitalOcean](https://www.digitalocean.com/), [Vultr](https://www.vultr.com/) and [AWS LightSail VPS](https://aws.amazon.com/lightsail/)
 
 ## Install
 
@@ -179,9 +174,9 @@ The recipient configured in `notify_email` will be notified when the following s
 
 The first email that is sent after the site setup contains the site's first backup. That is what the backup email will look line.
 
-#### Why are daily backups configured as an email?
+#### Why are backups done with email?
 
-Because everyone has an email with some space. Integration with Dropbox/GoogleDrive is hard enough for an opensource hobby project. We will not be integrating other backup methods.
+This project is built to rely less on third-party services like storage clouds. Everyone has an email with some space.
 
 #### What if my email inbox is being polluted with backups?
 
@@ -199,6 +194,6 @@ Here are some options:
 Once a week, your server will email you about any sites that are running on outdated wordpress versions.
 Instructions for updating wordpress versions are on the TODO page.
 
-#### Why is monit used instead of systemd?
+#### Why use monit instead of systemd?
 
 Need server and process monitoring, along with email notifications if something bad happens.
