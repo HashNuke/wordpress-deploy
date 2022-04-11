@@ -11,14 +11,13 @@
 In 2022, Wordpress is still really good for a lot of sites. The new Gutenberg full-site editor is 🔥 good. I hope this project helps you, just like it helps me host my sites.
 
 * 😍 Easy to configure
-* 💰 Budget-friendly setup - works just fine on a $5 server
+* 💰 Budget-friendly setup. Squeeze-in as many sites as you can on your $5 server.
 * ♻️ Automatic daily/weekly backups
-* ⚡️ Optimized wordpress sites with [WP Super Cache](https://wordpress.org/plugins/wp-super-cache/) and [Jetpack Boost](https://wordpress.org/plugins/jetpack-boost)
-* 👮‍♀️ Pre-configured monitoring notifications for the server
-* ⛑ Email alerts with instructions for Wordpress updates
+* 👮‍♀️ Server monitoring with email alerts
+* ⛑ Wordpress update email alerts
 * 🧯 Spam protection with fail2ban
 * 💪 Firewall protection with `ufw`
-* 👪 Supports multiple sites per server
+* ⚡️ Pre-installs [WP Super Cache](https://wordpress.org/plugins/wp-super-cache/) for speed optimization
 
 **This project has been tested on:**
 
