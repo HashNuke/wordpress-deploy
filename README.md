@@ -42,7 +42,7 @@ pipenv shell
 
 ## Deploy a site
 
-### Step-0: Create an Ubuntu server on your cloud provider
+### [Step-0] Create an Ubuntu server on your cloud provider
 
 Ensure to choose SSH key as the authentication method and add the SSH key to your local SSH key agent.
 
@@ -50,7 +50,7 @@ Ensure to choose SSH key as the authentication method and add the SSH key to you
 ssh-add ~/.ssh/mykey
 ```
 
-### Step-1: Add a server to the `hosts` file
+### [Step-1] Add a server to the `hosts` file
 
 Create a host file with the name of the server and IP address like below.
 
@@ -61,7 +61,7 @@ I've named my server as `personal`, but you can name it whatever.
 1.2.3.4
 ```
 
-### Step-2: Create a config file in the `sites` dir
+### [Step-2] Create a config file in the `sites` dir
 
 Copy the sample configuration to create a config for your site.
 
@@ -71,15 +71,13 @@ cp sites/sample.yml sites/mysite.yml
 
 Refer to the [configuration section](#configuration) below for details about options.
 
-### Step-3: Deploy
+### [Step-3] Deploy
 
 ```
 ansible-playbook setup.yml --extra-vars @sites/mysite.yml
 ```
 
-### Step-4: Add notification email to your email contacts
-
-**DO NOT SKIP THIS STEP**
+### [Step-4] Add notification email to your email contacts (DO NOT SKIP)
 
 * You will receive an email from deployer@something about your site being setup successfully.
 * Please add this to your contacts so that you do not miss this email.
