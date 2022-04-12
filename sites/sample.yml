@@ -1,4 +1,6 @@
+############################
 ### wordpress-deploy config
+############################
 #
 # Edit the configuration options below to pick something that works best for your site.
 #
@@ -8,12 +10,31 @@
 # If you come to love this project, tweet to @HashNuke. It would light up my day.
 #
 
+### Site details (mandatory)
+#
+# site_name is the name of the folder where your site will be created.
+# It must be unique.
+site_name: mysite
+
+# site_title is the name of the wordpress site
+site_title: "Hello World"
+
 ### Server (mandatory)
 #
 # Which server to use for this site? Check the "hosts" file in the repository.
 # Default value uses "personal"
 #
 server: personal
+
+### Default server user (mandatory)
+#
+# What is the default user for the server? Below are some notes to help you.
+#
+# If you use DigitalOcean, the default user is "root"
+# If you use a Canonical image on AWS, the default user is "ubuntu"
+# [TODO verify] If you used vultr, the default user is "root"
+#
+default_user: root
 
 ### Domain (mandatory)
 #
