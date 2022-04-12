@@ -180,6 +180,14 @@ wordpress_version: "latest"
 wordpress_version: "5.9.3"
 ```
 
+### `php_version`
+
+* We will update the PHP version once in a while, to the latest version that Wordpress can support.
+* You can optionally set your own PHP version to something that is available in the official ubuntu repos.
+
+```
+php_version: "7.4"
+```
 
 ## FAQs
 
