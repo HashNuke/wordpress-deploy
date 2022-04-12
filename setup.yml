@@ -1,12 +1,23 @@
 - name: "Setup wordpress"
-  hosts: "{{ deploy_to | default('personal') }}"
-  remote_user: root
+  hosts: "{{ server | default('personal') }}"
+  remote_user: "{{ default_user }}"
 
   tasks:
+    # Abstracting out versions for updating this later
+    # TOOD document php_version
+    # TODO document site_name
+    - name: Set versions and other defaults
+      ansible.builtin.set_fact:
+        requires_become: "{{ (default_user == 'root') | ternary('no', 'yes') }}"
+        deploy_user: "{{ deploy_user | default('deployer') }}"
+        php_version: "{{ php_version | default('7.4') }}"
+        mariadb_version: "10.8.2"
+        site_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}"
+
     # We install tmux as a bonus to tinker with the server later if required
     # Feel free to do your theme development and other such work on this tmux session :)
     #
-    - name: Install packages for further installation
+    - name: Install some basic packages for further installation
       apt:
         pkg:
           - apt-transport-https
@@ -14,33 +25,28 @@
           - ca-certificates
           - tmux
         state: present
-
-    # Abstracting out versions for updating this later
-    # TOOD document php_version
-    # TODO document site_name
-    - name: Set versions and other defaults
-      ansible.builtin.set_fact:
-        mariadb_versions: "10.8.2"
-        php_version: "{{ php_version | default('7.4') }}"
-        site_path: "/home/{{deploy_user}}"/sites/{{site_name}}"
+      become: "{{ requires_become }}"
 
     # sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
     - name: Fetch MariaDB repo keys
       ansible.builtin.apt_key:
         url: https://mariadb.org/mariadb_release_signing_key.asc
         state: present
+      become: "{{ requires_become }}"
 
     # sudo add-apt-repository 'deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/10.8.2/ubuntu/ focal main'
     - name: Add MariaDB repo
       ansible.builtin.apt_repository:
         repo: "deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/{{mariadb_version}}/ubuntu focal main"
         state: present
+      become: "{{ requires_become }}"
 
     # sudo add-apt-repository ppa:nginx/stable
     - name: "Add nginx repo"
       ansible.builtin.apt_repository:
         repo: "ppa:nginx/stable"
         state: present
+      become: "{{ requires_become }}"
 
     - name: Update apt package cache and install packages
       apt:
@@ -63,76 +69,102 @@
           - "mariadb-server"
         update_cache: yes
         state: present
-
-    - name: Create site path
-      todo: ""
+      become: "{{ requires_become }}"
 
     - name: Download wp cli
       get_url:
         url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
         dest: "/usr/local/bin/wp"
         mode: "u+rwx"
+      become: "{{ requires_become }}"
 
-    - name: Download wordpress
-      cmd: "wp core download --locale=en_US --version={{ wordpress_version | default('latest') }}"
-
-    - name: Create a new database for site
-      community.mysql.mysql_db:
-        name: "{{ site_name }}"
+    - name: Create a deployers group
+      group:
+        name: deployers
         state: present
+      become: "{{ requires_become }}"
 
-    - name: Generate wp-config using wp cli
-      todo:
+    - name: Create deployer user
+      user:
+        name: deployer
+        group: deployers
+        state: present
+      become: "{{ requires_become }}"
 
-    # TODO document site_title
-    # TODO document wordpress_admin_user
-    # TODO document wordpress_admin_email
-    # TODO notify_email should default to wordpress_admin_email
-    # TODO server notifications should be disabled only if notify_email is set to off
-    # TODO what about wordpress multi-site?
-    - name: Install wordpress
-      cmd: "wp core install --url={{ domain }} --title={{ site_title | default('Hello World') }} --admin_user={{ wordpress_admin_user | default('admin') }} --admin_password={{ wordpress_admin_password }} --admin_email={{ wordpress_admin_email }}"
+    - name: Create site dir
+      file:
+        path: "{{ site_path }}"
+        state: directory
+        recurse: yes
+      become: yes
+      become_user: "{{ deploy_user }}"
 
-    - name: Disable nginx sample config
-      module: "File"
-      args:
-        name: "/etc/nginx/sites-enabled/default"
-        state: "absent"
-      require_root: true
+    # - name: Create site path
+    #   todo: ""
+    #   become: "{{ requires_become }}"
+    #   # remote_user: "{{ default_user }}"
 
-    - name: Add nginx config for the site
-      todo:
+    # - name: Download wordpress
+    #   cmd: "wp core download --locale=en_US --version={{ wordpress_version | default('latest') }}"
 
-    - name: Reload nginx
-      todo:
+    # - name: Create a new database for site
+    #   community.mysql.mysql_db:
+    #     name: "{{ site_name }}"
+    #     state: present
+    #   become: "{{ requires_become }}"
 
-    - name: Setup cron job for backups
-      todo:
+    # - name: Generate wp-config using wp cli
+    #   become: "{{ requires_become }}"
 
-    - name: Setup monit
-      todo:
+    # # TODO document site_title
+    # # TODO document wordpress_admin_user
+    # # TODO document wordpress_admin_email
+    # # TODO notify_email should default to wordpress_admin_email
+    # # TODO server notifications should be disabled only if notify_email is set to off
+    # # TODO what about wordpress multi-site?
+    # - name: Install wordpress
+    #   cmd: "wp core install --url={{ domain }} --title={{ site_title | default('Hello World') }} --admin_user={{ wordpress_admin_user | default('admin') }} --admin_password={{ wordpress_admin_password }} --admin_email={{ wordpress_admin_email }}"
 
-    - name: Add mariadb config for monit
-      todo:
+    # - name: Disable nginx sample config
+    #   module: "File"
+    #   args:
+    #     name: "/etc/nginx/sites-enabled/default"
+    #     state: "absent"
+    #   require_root: true
 
-    - name: Add php-fpm config for monit
-      todo:
+    # - name: Add nginx config for the site
+    #   todo:
 
-    - name: Add nginx config for monit
-      todo:
+    # - name: Reload nginx
+    #   todo:
 
-    - name: Disable systemd services
-      todo:
-      loop:
-        - "nginx"
-        - "php{{php_version}}-fpm"
-        - "mariadb-server"
+    # - name: Setup cron job for backups
+    #   todo:
 
-    - name: Add site backup script
-      todo:
+    # - name: Setup monit
+    #   todo:
 
-    - name: Add wordpress update notification script
-      todo:
+    # - name: Add mariadb config for monit
+    #   todo:
 
-    - name: Send post-install notification email
-      todo:
+    # - name: Add php-fpm config for monit
+    #   todo:
+
+    # - name: Add nginx config for monit
+    #   todo:
+
+    # - name: Disable systemd services
+    #   todo:
+    #   loop:
+    #     - "nginx"
+    #     - "php{{php_version}}-fpm"
+    #     - "mariadb-server"
+
+    # - name: Add site backup script
+    #   todo:
+
+    # - name: Add wordpress update notification script
+    #   todo:
+
+    # - name: Send post-install notification email
+    #   todo:
