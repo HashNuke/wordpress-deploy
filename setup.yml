@@ -143,44 +143,64 @@
     - name: Read database password
       shell: "cat {{site_config_path}}/db-password"
       register: db_password_task
+      become: "{{ requires_become }}"
 
     - name: Create database if does not exist
       shell: "mysql -e \"CREATE DATABASE IF NOT EXISTS {{ site_name }};\""
-      become_user: "{{ deploy_user }}"
+      become: "{{ requires_become }}"
 
     - name: Create database user if does not exist
       shell: "mysql -e \"CREATE USER IF NOT EXISTS '{{ site_name }}'@'localhost' IDENTIFIED BY '{{ db_password_task.stdout }}';\""
       become_user: "{{ deploy_user }}"
+      become: "{{ requires_become }}"
 
     - name: Ensure database user has the right privileges to the site database
       shell: "mysql -e \"GRANT ALL PRIVILEGES ON {{ site_name }}.* TO '{{ site_name }}'@'localhost';\""
       become_user: "{{ deploy_user }}"
+      become: "{{ requires_become }}"
 
     - name: Download wordpress
       shell: "wp core download --locale=en_US --version={{ wordpress_version | default('latest') }}"
       creates: "{{ site_content_path }}/wp-login.php"
+      become: yes
+      become_user: "{{ deploy_user }}"
 
     # wp config create --dbname=mysite --dbuser=mysite --dbpass=`cat ../config/db-password` --locale=en_US
     - name: Create wp-config.php
       shell: "wp config create --dbname={{ site_name }} --dbuser={{ site_name }} --dbpass={{ db_password_task.stdout }} --locale=en_US"
       creates: "{{ site_content_path }}/wp-config.php"
+      become: yes
+      become_user: "{{ deploy_user }}"
 
     - name: Check if wordpress is already installed for site
       shell: "wp core is-installed"
       register: wp_install_check
-      become_user: "{{ deploy_user }}"
+      become: "{{ requires_become }}"
 
     - name: Generate default password for site
       shell: "openssl rand -hex 4 > {{site_config_path}}/default-password"
       args:
         creates: "{{site_config_path}}/default-password"
       when: wp_install_check.rc == 1
+      become: yes
       become_user: "{{ deploy_user }}"
 
     # wp core install --url=example.com --title="Hello World" --admin_user=admin --admin_password="TODO" --admin_email=anything@example.com --skip-email
     - name: Install the site
       shell: "wp core install --url={{ domain }} --title="{{ site_title }}" --admin_user={{ wordpress_admin_user }} --admin_password="`cat {{site_config_path}}/default-password`" --admin_email=anythign@example.com --skip-email"
       when: wp_install_check.rc == 1
+      become: yes
+      become_user: "{{ deploy_user }}"
+
+    - name: Ensure the askimet plugin is installed
+      shell: "wp plugin install akimet --activate"
+      become: yes
+      become_user: "{{ deploy_user }}"
+
+    - name: Ensure the wp-super-cache plugin is installed
+      shell: "wp plugin install wp-super-cache --activate"
+      become: yes
+      become_user: "{{ deploy_user }}"
 
     # - name: Create nginx config for the site
 
