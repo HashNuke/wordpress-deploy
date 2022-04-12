@@ -3,16 +3,19 @@
   remote_user: "{{ default_user }}"
 
   tasks:
-    # Abstracting out versions for updating this later
-    # TOOD document php_version
-    # TODO document site_name
+    # Abstracting out versions for updating this later.
+    # default_user is not a documented variable. But you could use this to change the name of the deployer user.
     - name: Set versions and other defaults
       ansible.builtin.set_fact:
         requires_become: "{{ (default_user == 'root') | ternary('no', 'yes') }}"
         deploy_user: "{{ deploy_user | default('deployer') }}"
         php_version: "{{ php_version | default('7.4') }}"
         mariadb_version: "10.8.2"
+        wordpress_deploy_path: "/home/{{ deploy_user | default('deployer') }}/wordpress-deploy"
         site_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}"
+        site_config_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/config"
+        site_content_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/content"
+      tags: ['tryout', 'tryout2']
 
     # We install tmux as a bonus to tinker with the server later if required
     # Feel free to do your theme development and other such work on this tmux session :)
@@ -78,7 +81,7 @@
         mode: "u+rwx"
       become: "{{ requires_become }}"
 
-    - name: Create a deployers group
+    - name: Create a deployers user group
       group:
         name: deployers
         state: present
@@ -91,18 +94,80 @@
         state: present
       become: "{{ requires_become }}"
 
-    - name: Create site dir
+    - name: Create common config dir
       file:
-        path: "{{ site_path }}"
+        path: "{{ wordpress_deploy_path }}"
         state: directory
         recurse: yes
       become: yes
       become_user: "{{ deploy_user }}"
 
-    # - name: Create site path
-    #   todo: ""
+    - name: Create site content dir
+      file:
+        path: "{{ site_content_path }}"
+        state: directory
+        recurse: yes
+        owner: "{{ deploy_user }}"
+      become: yes
+      become_user: "{{ deploy_user }}"
+      tags: ['tryout2']
+
+    - name: Create site config dir
+      file:
+        path: "{{ site_config_path }}"
+        state: directory
+        recurse: yes
+        owner: "{{ deploy_user }}"
+      become: yes
+      become_user: "{{ deploy_user }}"
+      tags: ['tryout2']
+
+    - name: Create database password
+      shell: "openssl rand -hex 6 > {{site_config_path}}/db-password"
+      args:
+        creates: "{{site_config_path}}/db-password"
+      become_user: "{{ deploy_user }}"
+      tags: ['tryout']
+
+    - name: Read database password
+      shell: "cat {{site_config_path}}/db-password"
+      register: db_password_task
+      tags: ['tryout']
+
+    - name: Create database if does not exist
+      shell: "mysql -e \"CREATE DATABASE IF NOT EXISTS {{ site_name }};\""
+      become_user: "{{ deploy_user }}"
+      tags: ['tryout']
+
+    - name: Create database user if does not exist
+      shell: "mysql -e \"CREATE USER IF NOT EXISTS '{{ site_name }}'@'localhost' IDENTIFIED BY '{{ db_password_task.stdout }}';\""
+      become_user: "{{ deploy_user }}"
+      tags: ['tryout']
+
+    - name: Ensure database user has the right privileges to the site database
+      shell: "mysql -e \"GRANT ALL PRIVILEGES ON {{ site_name }}.* TO '{{ site_name }}'@'localhost';\""
+      become_user: "{{ deploy_user }}"
+      tags: ['tryout']
+
+# Following lines in /etc/php/7.4/fpm/pool.d/www.conf should be set to deploy_user and deployers group
+# user = www-data
+# group = www-data
+
+# wp config create --dbname=mysite --dbuser=mysite --dbpass=`cat ../config/db-password` --locale=en_US
+# download here
+# wp core install --url=TEST --title="Hello World 123" --admin_user=admin --admin_password="TODO" --admin_email=anythign@example.com --skip-email
+
+
+    # - name: Create database user
+    #   community.mysql.mysql_user:
+    #     name: "{{ lookup('password', site_config_path + '/mysql-user length=5 chars=ascii_letters') }}"
+    #     password: "{{ lookup('password', site_config_path + '/mysql-password length=12 chars=ascii_letters') }}"
+    #     priv: "{{ site_name }}.*:ALL,GRANT"
+    #     host: localhost
+    #     state: present
     #   become: "{{ requires_become }}"
-    #   # remote_user: "{{ default_user }}"
+
+    # - name: Create nginx config for the site
 
     # - name: Download wordpress
     #   cmd: "wp core download --locale=en_US --version={{ wordpress_version | default('latest') }}"
