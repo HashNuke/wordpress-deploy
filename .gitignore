@@ -1,2 +1,3 @@
 !sites/sample.yml
 sites/*.yml
+hosts
