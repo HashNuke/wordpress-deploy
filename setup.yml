@@ -175,7 +175,6 @@
     - name: Check if wordpress is already installed for site
       shell: "wp core is-installed"
       register: wp_install_check
-      become: "{{ requires_become }}"
 
     - name: Generate default password for site
       shell: "openssl rand -hex 4 > {{site_config_path}}/default-password"
@@ -203,18 +202,6 @@
       become_user: "{{ deploy_user }}"
 
     # - name: Create nginx config for the site
-
-    # - name: Download wordpress
-    #   cmd: "wp core download --locale=en_US --version={{ wordpress_version | default('latest') }}"
-
-    # - name: Create a new database for site
-    #   community.mysql.mysql_db:
-    #     name: "{{ site_name }}"
-    #     state: present
-    #   become: "{{ requires_become }}"
-
-    # - name: Generate wp-config using wp cli
-    #   become: "{{ requires_become }}"
 
     # # TODO document site_title
     # # TODO document wordpress_admin_user
