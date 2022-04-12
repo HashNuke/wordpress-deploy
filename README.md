@@ -40,7 +40,9 @@ pipenv shell
 
 ## Deploy a site
 
-### [Step-0] Create an Ubuntu server on your cloud provider
+> Please follow the same order of instructions to avoid issues.
+
+### [Step-1] Create a server with Ubuntu 20.04 (LTS) on your cloud provider
 
 Ensure to choose SSH key as the authentication method and add the SSH key to your local SSH key agent.
 
@@ -48,7 +50,25 @@ Ensure to choose SSH key as the authentication method and add the SSH key to you
 ssh-add ~/.ssh/mykey
 ```
 
-### [Step-1] Add a server to the `hosts` file
+### [Step-2] Add DNS records
+
+You need DNS records for the following:
+
+#### Domain/subdomain for email notifications
+
+* The backup emails, server alerts, etc, are sent out from your own server.
+* For this to work, please point an A-record for any subdomain to the server's IP (example: `anything.example.com`)
+* Make note of this domain/subdomain.
+
+#### Domain/subdomain for the new website
+
+* If your website will be served at `example.com`, then
+  * Add an A-record pointing to `example.com` pointing to the server's IP
+  * Add a CNAME record for `www.example.com` pointing to example.com
+* If your website will be served at `blog.example.com`, then
+  * Add an A record for `blog.example.com` pointing to the server's IP
+
+### [Step-3] Add a server to the `hosts` file
 
 Create a host file with the name of the server and IP address like below.
 
@@ -59,9 +79,10 @@ I've named my server as `personal`, but you can name it whatever.
 1.2.3.4
 ```
 
-### [Step-2] Create a config file in the `sites` dir
+### [Step-4] Create a config file in the `sites` dir
 
-Copy the sample configuration to create a config for your site.
+* Copy the sample configuration to create a config for your site.
+* Please read the configuration file and set the values appropriately.
 
 ```
 cp sites/sample.yml sites/mysite.yml
@@ -69,15 +90,15 @@ cp sites/sample.yml sites/mysite.yml
 
 Refer to the [configuration section](#configuration) below for details about options.
 
-### [Step-3] Deploy
+### [Step-5] Deploy
 
 ```
 ansible-playbook setup.yml --extra-vars @sites/mysite.yml
 ```
 
-### [Step-4] Add notification email to your email contacts (DO NOT SKIP)
+### [Step-6] Check the post-install notification email (DO NOT SKIP)
 
-* You will receive an email from deployer@something about your site being setup successfully.
+* You will receive an email from deployer@something about your site being setup successfully. Check your spam if you did not receive it.
 * Please add this to your contacts so that you do not miss this email.
 
 This email is coming from the server you just setup. You will get a backup of your site every 7 days.
