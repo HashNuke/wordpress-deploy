@@ -157,16 +157,6 @@
 # download here
 # wp core install --url=TEST --title="Hello World 123" --admin_user=admin --admin_password="TODO" --admin_email=anythign@example.com --skip-email
 
-
-    # - name: Create database user
-    #   community.mysql.mysql_user:
-    #     name: "{{ lookup('password', site_config_path + '/mysql-user length=5 chars=ascii_letters') }}"
-    #     password: "{{ lookup('password', site_config_path + '/mysql-password length=12 chars=ascii_letters') }}"
-    #     priv: "{{ site_name }}.*:ALL,GRANT"
-    #     host: localhost
-    #     state: present
-    #   become: "{{ requires_become }}"
-
     # - name: Create nginx config for the site
 
     # - name: Download wordpress
