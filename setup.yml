@@ -17,18 +17,12 @@
 
     # Abstracting out versions for updating this later
     # TOOD document php_version
+    # TODO document site_name
     - name: Set versions and other defaults
       ansible.builtin.set_fact:
         mariadb_versions: "10.8.2"
-        wordpress_version: {{ wordpress_version | default('latest') }}
-        php_version: {{ php_version | default('7.4') }}
-
-    # This is because the URL may look like any of the following:
-    # https://wordpress.org/wordpress-5.9.3.tar.gz
-    # https://wordpress.org/latest.tar.gz
-    #
-    - name: "Download file from url"
-      "https://wordpress.org/{{ (wordpress_version == "latest") | ternary('', 'wordpress-') }}-{{ wordpress_version }}.tar.gz"
+        php_version: "{{ php_version | default('7.4') }}"
+        site_path: "/home/{{deploy_user}}"/sites/{{site_name}}"
 
     # sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
     - name: Fetch MariaDB repo keys
@@ -70,9 +64,75 @@
         update_cache: yes
         state: present
 
-    - name: "Disable nginx sample config"
+    - name: Create site path
+      todo: ""
+
+    - name: Download wp cli
+      get_url:
+        url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
+        dest: "/usr/local/bin/wp"
+        mode: "u+rwx"
+
+    - name: Download wordpress
+      cmd: "wp core download --locale=en_US --version={{ wordpress_version | default('latest') }}"
+
+    - name: Create a new database for site
+      community.mysql.mysql_db:
+        name: "{{ site_name }}"
+        state: present
+
+    - name: Generate wp-config using wp cli
+      todo:
+
+    # TODO document site_title
+    # TODO document wordpress_admin_user
+    # TODO document wordpress_admin_email
+    # TODO notify_email should default to wordpress_admin_email
+    # TODO server notifications should be disabled only if notify_email is set to off
+    # TODO what about wordpress multi-site?
+    - name: Install wordpress
+      cmd: "wp core install --url={{ domain }} --title={{ site_title | default('Hello World') }} --admin_user={{ wordpress_admin_user | default('admin') }} --admin_password={{ wordpress_admin_password }} --admin_email={{ wordpress_admin_email }}"
+
+    - name: Disable nginx sample config
       module: "File"
       args:
         name: "/etc/nginx/sites-enabled/default"
         state: "absent"
       require_root: true
+
+    - name: Add nginx config for the site
+      todo:
+
+    - name: Reload nginx
+      todo:
+
+    - name: Setup cron job for backups
+      todo:
+
+    - name: Setup monit
+      todo:
+
+    - name: Add mariadb config for monit
+      todo:
+
+    - name: Add php-fpm config for monit
+      todo:
+
+    - name: Add nginx config for monit
+      todo:
+
+    - name: Disable systemd services
+      todo:
+      loop:
+        - "nginx"
+        - "php{{php_version}}-fpm"
+        - "mariadb-server"
+
+    - name: Add site backup script
+      todo:
+
+    - name: Add wordpress update notification script
+      todo:
+
+    - name: Send post-install notification email
+      todo:
