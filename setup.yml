@@ -1,0 +1,78 @@
+- name: "Setup wordpress"
+  hosts: "{{ deploy_to | default('personal') }}"
+  remote_user: root
+
+  tasks:
+    # We install tmux as a bonus to tinker with the server later if required
+    # Feel free to do your theme development and other such work on this tmux session :)
+    #
+    - name: Install packages for further installation
+      apt:
+        pkg:
+          - apt-transport-https
+          - curl
+          - ca-certificates
+          - tmux
+        state: present
+
+    # Abstracting out versions for updating this later
+    # TOOD document php_version
+    - name: Set versions and other defaults
+      ansible.builtin.set_fact:
+        mariadb_versions: "10.8.2"
+        wordpress_version: {{ wordpress_version | default('latest') }}
+        php_version: {{ php_version | default('7.4') }}
+
+    # This is because the URL may look like any of the following:
+    # https://wordpress.org/wordpress-5.9.3.tar.gz
+    # https://wordpress.org/latest.tar.gz
+    #
+    - name: "Download file from url"
+      "https://wordpress.org/{{ (wordpress_version == "latest") | ternary('', 'wordpress-') }}-{{ wordpress_version }}.tar.gz"
+
+    # sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+    - name: Fetch MariaDB repo keys
+      ansible.builtin.apt_key:
+        url: https://mariadb.org/mariadb_release_signing_key.asc
+        state: present
+
+    # sudo add-apt-repository 'deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/10.8.2/ubuntu/ focal main'
+    - name: Add MariaDB repo
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/{{mariadb_version}}/ubuntu focal main"
+        state: present
+
+    # sudo add-apt-repository ppa:nginx/stable
+    - name: "Add nginx repo"
+      ansible.builtin.apt_repository:
+        repo: "ppa:nginx/stable"
+        state: present
+
+    - name: Update apt package cache and install packages
+      apt:
+        pkg:
+          - "nginx"
+          - "ghostscript"
+          - "php{{ php_version }}"
+          - "php{{ php_version }}-fpm"
+          - "php{{ php_version }}-common"
+          - "php{{ php_version }}-curl"
+          - "php{{ php_version }}-json"
+          - "php{{ php_version }}-imagick"
+          - "php{{ php_version }}-zip"
+          - "php{{ php_version }}-mbstring"
+          - "php{{ php_version }}-xml"
+          - "php{{ php_version }}-bcmath"
+          - "php{{ php_version }}-intl"
+          - "php{{ php_version }}-xsl"
+          - "php{{ php_version }}-mysql"
+          - "mariadb-server"
+        update_cache: yes
+        state: present
+
+    - name: "Disable nginx sample config"
+      module: "File"
+      args:
+        name: "/etc/nginx/sites-enabled/default"
+        state: "absent"
+      require_root: true
