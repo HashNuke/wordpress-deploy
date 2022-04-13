@@ -226,28 +226,12 @@
         name: nginx
         state: started
 
-    # - name: Create nginx config for the site
 
     # # TODO document wordpress_admin_user
     # # TODO document wordpress_admin_email
     # # TODO notify_email should default to wordpress_admin_email
     # # TODO server notifications should be disabled only if notify_email is set to off
     # # TODO what about wordpress multi-site?
-    # - name: Install wordpress
-    #   cmd: "wp core install --url={{ domain }} --title={{ site_title | default('Hello World') }} --admin_user={{ wordpress_admin_user | default('admin') }} --admin_password={{ wordpress_admin_password }} --admin_email={{ wordpress_admin_email }}"
-
-    # - name: Disable nginx sample config
-    #   module: "File"
-    #   args:
-    #     name: "/etc/nginx/sites-enabled/default"
-    #     state: "absent"
-    #   require_root: true
-
-    # - name: Add nginx config for the site
-    #   todo:
-
-    # - name: Reload nginx
-    #   todo:
 
     # - name: Setup cron job for backups
     #   todo:
