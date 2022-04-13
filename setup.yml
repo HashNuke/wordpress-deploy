@@ -2,6 +2,12 @@
   hosts: "{{ server | default('personal') }}"
   remote_user: "{{ default_user }}"
 
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+
   tasks:
     # Abstracting out versions for updating this later.
     # default_user is not a documented variable. But you could use this to change the name of the deployer user.
@@ -212,6 +218,13 @@
         src: "templates/site.nginx-conf.j2"
         dest: "/etc/nginx/sites-available/{{ site_name }}"
       become_user: "{{ deploy_user }}"
+      notify:
+        - Restart nginx
+
+    - name: Ensure nginx is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
 
     # - name: Create nginx config for the site
 
