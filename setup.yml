@@ -74,6 +74,12 @@
         state: present
       become: "{{ requires_become }}"
 
+    - name: "Disable nginx sample config"
+      file:
+        name: "/etc/nginx/sites-enabled/default"
+        state: "absent"
+      become: "{{ requires_become }}"
+
     - name: Download wp cli
       get_url:
         url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
@@ -201,9 +207,14 @@
       become: yes
       become_user: "{{ deploy_user }}"
 
+    - name: "Add nginx config for site"
+      ansible.builtin.template:
+        src: "templates/site.nginx-conf.j2"
+        dest: "/etc/nginx/sites-available/{{ site_name }}"
+      become_user: "{{ deploy_user }}"
+
     # - name: Create nginx config for the site
 
-    # # TODO document site_title
     # # TODO document wordpress_admin_user
     # # TODO document wordpress_admin_email
     # # TODO notify_email should default to wordpress_admin_email

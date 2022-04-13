@@ -1,0 +1,95 @@
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        # SSL configuration
+        #
+        # listen 443 ssl default_server;
+        # listen [::]:443 ssl default_server;
+        #
+        # Note: You should disable gzip for SSL traffic.
+        # See: https://bugs.debian.org/773332
+        #
+        # Read up on ssl_ciphers to ensure a secure configuration.
+        # See: https://bugs.debian.org/765782
+        #
+
+        root /home/deployer/sites/mysite;
+        index index.php index.html index.htm index.nginx-debian.html;
+
+        server_name {{ domain }}{% if redirect_domain is defined %} {{redirect_domain}}{% endif %};
+
+        location / {
+                # First attempt to serve request as file,
+                # then as directory,
+                # then as an index.php file
+                # try_files $uri $uri/ =404;
+                try_files $uri $uri/ /index.php?$args;
+        }
+
+        location ~ \.php$ {
+                include snippets/fastcgi-php.conf;
+                fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+        }
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        location ~ /\.ht {
+               deny all;
+        }
+
+        ### Blocks .git dir
+        #
+        # This is useful if you want to use git. But git is not configured as a part of wordpress-deploy for now.
+        #
+        location ~* /\.git {
+                deny all;
+                access_log off;
+                log_not_found off;
+        }
+
+        ###############
+        ### The following rules were borrowed from https://www.bjornjohansen.com/block-access-to-php-files-with-nginx
+        ### and have been reviewed
+        ###############
+
+        ### Blocks PHP files in wp-content directory
+        #
+        # uploads, themes, plugins and upgrade folders exist within this directory.
+        #
+        location ~* /wp-content/.*.php$ {
+                deny all;
+                access_log off;
+                log_not_found off;
+        }
+
+        ### Blocks wp-includes
+        #
+        location ~* /wp-includes/.*.php$ {
+                deny all;
+                access_log off;
+                log_not_found off;
+        }
+
+        ### Blocks PHP files in the uploads directory
+        #
+        # The files directory is used by wordpress multi-site.
+        #
+        location ~* /(?:uploads|files)/.*.php$ {
+                deny all;
+                access_log off;
+                log_not_found off;
+        }
+}
+
+{% if redirect_with_301 is defined %}
+{% for domain in redirect_with_301 %}
+server {
+    listen 80;
+    server_name {{ domain }};
+
+    return 301 https://{{ domain }}.com$request_uri;
+}
+{% endfor %}
+{% endif %}
