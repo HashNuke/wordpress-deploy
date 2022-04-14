@@ -173,20 +173,28 @@
 
     - name: Download wordpress
       shell: "wp core download --locale=en_US --version={{ wordpress_version | default('latest') }}"
-      creates: "{{ site_content_path }}/wp-login.php"
+      args:
+        chdir: "{{ site_content_path }}"
+        creates: "{{ site_content_path }}/wp-login.php"
       become: yes
       become_user: "{{ deploy_user }}"
 
     # wp config create --dbname=mysite --dbuser=mysite --dbpass=`cat ../config/db-password` --locale=en_US
     - name: Create wp-config.php
       shell: "wp config create --dbname={{ site_name }} --dbuser={{ site_name }} --dbpass={{ db_password_task.stdout }} --locale=en_US"
-      creates: "{{ site_content_path }}/wp-config.php"
+      args:
+        chdir: "{{ site_content_path }}"
+        creates: "{{ site_content_path }}/wp-config.php"
       become: yes
       become_user: "{{ deploy_user }}"
 
     - name: Check if wordpress is already installed for site
       shell: "wp core is-installed"
+      args:
+        chdir: "{{ site_content_path }}"
       register: wp_install_check
+      become: yes
+      become_user: "{{ deploy_user }}"
 
     - name: Generate default password for site
       shell: "openssl rand -hex 4 > {{site_config_path}}/default-password"
@@ -199,17 +207,23 @@
     # wp core install --url=example.com --title="Hello World" --admin_user=admin --admin_password="TODO" --admin_email=anything@example.com --skip-email
     - name: Install the site
       shell: "wp core install --url={{ domain }} --title="{{ site_title }}" --admin_user={{ wordpress_admin_user }} --admin_password="`cat {{site_config_path}}/default-password`" --admin_email=anythign@example.com --skip-email"
+      args:
+        chdir: "{{ site_content_path }}"
       when: wp_install_check.rc == 1
       become: yes
       become_user: "{{ deploy_user }}"
 
     - name: Ensure the askimet plugin is installed
       shell: "wp plugin install akimet --activate"
+      args:
+        chdir: "{{ site_content_path }}"
       become: yes
       become_user: "{{ deploy_user }}"
 
     - name: Ensure the wp-super-cache plugin is installed
       shell: "wp plugin install wp-super-cache --activate"
+      args:
+        chdir: "{{ site_content_path }}"
       become: yes
       become_user: "{{ deploy_user }}"
 
