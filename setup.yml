@@ -23,102 +23,10 @@
         site_content_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/content"
       tags: ['tryout', 'tryout2']
 
-    # We install tmux as a bonus to tinker with the server later if required
-    # Feel free to do your theme development and other such work on this tmux session :)
-    #
-    - name: Install some basic packages for further installation
-      apt:
-        pkg:
-          - apt-transport-https
-          - curl
-          - ca-certificates
-          - tmux
-        state: present
-      become: "{{ requires_become }}"
-
-    # sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    - name: Fetch MariaDB repo keys
-      ansible.builtin.apt_key:
-        url: https://mariadb.org/mariadb_release_signing_key.asc
-        state: present
-      become: "{{ requires_become }}"
-
-    # sudo add-apt-repository 'deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/10.8.2/ubuntu/ focal main'
-    - name: Add MariaDB repo
-      ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/{{mariadb_version}}/ubuntu focal main"
-        state: present
-      become: "{{ requires_become }}"
-
-    # sudo add-apt-repository ppa:nginx/stable
-    - name: "Add nginx repo"
-      ansible.builtin.apt_repository:
-        repo: "ppa:nginx/stable"
-        state: present
-      become: "{{ requires_become }}"
-
-    - name: Update apt package cache and install packages
-      apt:
-        pkg:
-          - "nginx"
-          - "ghostscript"
-          - "php{{ php_version }}"
-          - "php{{ php_version }}-fpm"
-          - "php{{ php_version }}-common"
-          - "php{{ php_version }}-curl"
-          - "php{{ php_version }}-json"
-          - "php{{ php_version }}-imagick"
-          - "php{{ php_version }}-zip"
-          - "php{{ php_version }}-mbstring"
-          - "php{{ php_version }}-xml"
-          - "php{{ php_version }}-bcmath"
-          - "php{{ php_version }}-intl"
-          - "php{{ php_version }}-xsl"
-          - "php{{ php_version }}-mysql"
-          - "mariadb-server"
-        update_cache: yes
-        state: present
-      become: "{{ requires_become }}"
-
-    - name: "Disable nginx sample config"
-      file:
-        name: "/etc/nginx/sites-enabled/default"
-        state: "absent"
-      become: "{{ requires_become }}"
-
-    - name: Download wp cli
-      get_url:
-        url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
-        dest: "/usr/local/bin/wp"
-        mode: "u+rwx"
-      become: "{{ requires_become }}"
-
-    - name: Create a deployers user group
-      group:
-        name: deployers
-        state: present
-      become: "{{ requires_become }}"
-
-    - name: Create deployer user
-      user:
-        name: deployer
-        group: deployers
-        state: present
-      become: "{{ requires_become }}"
-
-    - name: Update user name in php-fpm conf
-      lineinfile:
-        path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
-        search_string: "user = www-data"
-        line: "user = {{ deploy_user }}"
-      become: "{{ requires_become }}"
-
-    - name: Update group name in php-fpm conf
-      lineinfile:
-        path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
-        search_string: "group = www-data"
-        line: "group = deployers"
-      become: "{{ requires_become }}"
+    - include_tasks: "tasks/server-base.yml"
+      args:
+        apply:
+          become: "{{ requires_become }}"
 
     - name: Create common config dir
       file:
@@ -192,6 +100,7 @@
       shell: "wp core is-installed"
       args:
         chdir: "{{ site_content_path }}"
+      ignore_errors: True
       register: wp_install_check
       become: yes
       become_user: "{{ deploy_user }}"
