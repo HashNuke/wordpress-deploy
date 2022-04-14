@@ -230,7 +230,7 @@
     - name: "Add nginx config for site"
       ansible.builtin.template:
         src: "templates/site.nginx-conf.j2"
-        dest: "/etc/nginx/sites-available/{{ site_name }}"
+        dest: "/etc/nginx/sites-enabled/{{ site_name }}"
       become_user: "{{ deploy_user }}"
       notify:
         - Restart nginx
