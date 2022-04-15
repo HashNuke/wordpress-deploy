@@ -134,7 +134,7 @@ domain: "example.com"
 redirect_domain: "www.example.com"
 ```
 
-#### `outgoing_email_domain`
+#### `email_domain`
 
 * What domain will this server use to send outgoing emails? We just need to look legit to other email servers.
 * Configure any unused subdomain and add a DNS A record pointing to this server.
@@ -142,7 +142,7 @@ redirect_domain: "www.example.com"
 * Use the same config for all sites on the server.
 
 ```yaml
-outgoing_email_domain: "mailman.example.com"
+email_domain: "mailman.example.com"
 ```
 
 #### `notify_email`

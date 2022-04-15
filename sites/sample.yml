@@ -60,7 +60,7 @@ redirect_domain: "www.example.com"
 # We just need to look legit to other email servers.
 # Use the same config for all sites on the server.
 #
-outgoing_email_domain: "mailman.example.com"
+email_domain: "mailman.example.com"
 
 ### Notification email
 #
