@@ -31,7 +31,7 @@
 
 # wp core install --url=example.com --title="Hello World" --admin_user=admin --admin_password="TODO" --admin_email=anything@example.com --skip-email
 - name: Run wordpress installation
-  shell: "wp core install --url={{ domain }} --title=\"{{ site_title }}\" --admin_user={{ wordpress_admin_user | default('admin') }} --admin_password=\"`cat {{site_config_path}}/default-password`\" --admin_email={{wordpress_admin_email}} --skip-email"
+  shell: "wp core install --url={{ domain }} --title=\"{{ site_title }}\" --admin_user={{ wordpress_admin_user | default('admin') }} --admin_email={{wordpress_admin_email}} --skip-email --prompt=admin_password < {{site_config_path}}/default-password"
   args:
     chdir: "{{ site_content_path }}"
   when: "'not_installed' in wp_install_check.stdout"
