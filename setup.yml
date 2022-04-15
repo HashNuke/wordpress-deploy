@@ -28,6 +28,7 @@
         site_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}"
         site_config_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/config"
         site_content_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/content"
+        site_backups_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/backups"
       tags:
         - "wp-install"
         - "wp-plugins"
@@ -39,48 +40,37 @@
         apply:
           become: "{{ requires_become }}"
 
-    - include_tasks:
+    - name: Configure ufw firewall
+      include_tasks:
         file: "tasks/ufw.yml"
         apply:
           become: "{{ requires_become }}"
 
-    - include_tasks:
-        file: "tasks/ufw.yml"
+    - name: Configure postfix
+      include_tasks:
+        file: "tasks/postfix.yml"
         apply:
           become: "{{ requires_become }}"
       tags: ['postfix']
 
-    - name: Create common config dir
+    - name: Create required directories
       file:
-        path: "{{ wordpress_deploy_path }}"
+        path: "{{ item }}"
         state: directory
         recurse: yes
-      become: "{{ requires_become }}"
+      become: yes
       become_user: "{{ deploy_user }}"
-
-    - name: Create site content dir
-      file:
-        path: "{{ site_content_path }}"
-        state: directory
-        recurse: yes
-        owner: "{{ deploy_user }}"
-      become: "{{ requires_become }}"
-      become_user: "{{ deploy_user }}"
-
-    - name: Create site config dir
-      file:
-        path: "{{ site_config_path }}"
-        state: directory
-        recurse: yes
-        owner: "{{ deploy_user }}"
-      become: "{{ requires_become }}"
-      become_user: "{{ deploy_user }}"
+      loop:
+        - "{{ wordpress_deploy_path }}"
+        - "{{ site_backups_path }}"
+        - "{{ site_config_path }}"
+        - "{{ site_content_path }}"
 
     - name: Create database password
       shell: "openssl rand -hex 6 > {{site_config_path}}/db-password"
       args:
         creates: "{{site_config_path}}/db-password"
-      become: "{{ requires_become }}"
+      become: yes
       become_user: "{{ deploy_user }}"
 
     - name: Read database password
@@ -135,6 +125,7 @@
       become: "{{ requires_become }}"
       notify:
         - Restart nginx
+      tags: ["install-scripts"]
 
     - name: Ensure nginx is running
       ansible.builtin.service:
@@ -142,13 +133,39 @@
         state: started
       become: "{{ requires_become }}"
 
+    - name: Get letsencrypt certificate for domain
+      shell: "certbot certonly --agree-tos -m {{ wordpress_admin_email }} --nginx -d {{ domain }}"
+      args:
+        creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+      become: "{{ requires_become }}"
+
+    - name: Setup cron to renew certbot certificates everyday at 9am GMT
+      ansible.builtin.cron:
+        name: "certbot renew"
+        minute: "0"
+        hour: "9"
+        job: "certbot renew -q"
+
+    - name: Add ssl config for nginx
+      blockinfile:
+        dest: "/etc/nginx/sites-enabled/{{ site_name }}"
+        block: "{{ lookup('template', 'templates/nginx-ssl-config.j2') }}"
+        insertafter: "#SSL-CONFIG-BEGIN"
+      notify:
+        - Restart nginx
+      tags: ["install-scripts"]
+
     - name: Read default wordpress admin password
       shell: "cat {{site_config_path}}/default-password"
       register: default_wordpress_password_task
       become: "{{ requires_become }}"
       tags: ["install-scripts"]
 
-    - name: Set default_wordpress_password
+    # - include_tasks:
+    #     file: "tasks/site-backups.yml"
+    #   tags: ["install-scripts"]
+
+    - name: Set variable default_wordpress_password
       set_fact:
         default_wordpress_password: "{{ default_wordpress_password_task.stdout }}"
       tags: ["install-scripts"]
@@ -165,6 +182,15 @@
       ansible.builtin.template:
         src: "templates/post-install-mail.php.j2"
         dest: "{{ site_config_path }}/post-install-mail.php"
+      become: yes
+      become_user: "{{ deploy_user }}"
+      tags: ["install-scripts"]
+
+    - name: "Send post-install email"
+      shell: "php {{site_config_path}}/post-install-mail.php"
+      args:
+        chdir: "{{ site_config_path }}"
+        creates: "{{ site_config_path }}/post-install-mail.state"
       become: yes
       become_user: "{{ deploy_user }}"
       tags: ["install-scripts"]
