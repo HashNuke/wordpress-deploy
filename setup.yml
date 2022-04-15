@@ -86,7 +86,6 @@
       args:
         chdir: "{{ site_content_path }}"
         creates: "{{ site_content_path }}/wp-login.php"
-      become: yes
       become_user: "{{ deploy_user }}"
 
     # wp config create --dbname=mysite --dbuser=mysite --dbpass=`cat ../config/db-password` --locale=en_US
@@ -95,7 +94,6 @@
       args:
         chdir: "{{ site_content_path }}"
         creates: "{{ site_content_path }}/wp-config.php"
-      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
 
     - name: Check if wordpress is already installed for site
@@ -105,7 +103,6 @@
       ignore_errors: True
       register: wp_install_check
       changed_when: "'not_installed' in wp_install_check.stdout"
-      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
 
     - name: Generate default password for site
