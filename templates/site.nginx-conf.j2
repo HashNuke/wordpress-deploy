@@ -1,18 +1,9 @@
 server {
-        listen 80 default_server;
-        listen [::]:80 default_server;
+        listen 80;
+        listen [::]:80;
 
-        # SSL configuration
-        #
-        # listen 443 ssl default_server;
-        # listen [::]:443 ssl default_server;
-        #
-        # Note: You should disable gzip for SSL traffic.
-        # See: https://bugs.debian.org/773332
-        #
-        # Read up on ssl_ciphers to ensure a secure configuration.
-        # See: https://bugs.debian.org/765782
-        #
+        #SSL-CONFIG-BEGIN
+        #SSL-CONFIG-END
 
         root /home/deployer/sites/mysite/content;
         index index.php index.html index.htm index.nginx-debian.html;
