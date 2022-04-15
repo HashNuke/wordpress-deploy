@@ -34,7 +34,7 @@
   tags: ["wp-install"]
 
 # wp core install --url=example.com --title="Hello World" --admin_user=admin --admin_password="TODO" --admin_email=anything@example.com --skip-email
-- name: Install the site
+- name: Run wordpress installation
   shell: "wp core install --url={{ domain }} --title=\"{{ site_title }}\" --admin_user={{ wordpress_admin_user | default('admin') }} --admin_password=\"`cat {{site_config_path}}/default-password`\" --admin_email={{wordpress_admin_email}} --skip-email"
   args:
     chdir: "{{ site_content_path }}"

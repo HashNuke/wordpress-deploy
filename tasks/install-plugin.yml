@@ -3,8 +3,6 @@
   args:
     chdir: "{{ site_content_path }}"
   register: wp_plugin_check
-  become: yes
-  become_user: "{{ deploy_user }}"
   changed_when: "'not_installed' in wp_plugin_check.stdout"
   tags: ["wp-plugins"]
 
@@ -12,7 +10,5 @@
   shell: "wp plugin install {{plugin_name}} --activate"
   args:
     chdir: "{{ site_content_path }}"
-  become: yes
-  become_user: "{{ deploy_user }}"
   when: "'not_installed' in wp_plugin_check.stdout"
   tags: ["wp-plugins"]
