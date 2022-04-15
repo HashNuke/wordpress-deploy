@@ -47,6 +47,8 @@
       - "php{{ php_version }}-xsl"
       - "php{{ php_version }}-mysql"
       - "mariadb-server"
+      - "postfix"
+      - "mailutils"
     update_cache: yes
     state: present
 
