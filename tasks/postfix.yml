@@ -1,0 +1,26 @@
+- name: Create /etc/mailname
+  ansible.builtin.copy:
+    content: "myorigin = {{ email_domain }}"
+    dest: /etc/mailname
+  tags: ['postfix']
+
+- name: Add postfix config
+  ansible.builtin.template:
+    src: "templates/postfix-config.cf.j2"
+    dest: "/etc/postfix/main.cf"
+  tags: ['postfix']
+
+- name: Create /etc/postfix/postfix-files
+  ansible.builtin.copy:
+    content: ""
+    dest: /etc/postfix/postfix-files
+  notify:
+    - Restart postfix
+  tags: ['postfix']
+
+- name: Unmask postfix
+  ansible.builtin.systemd:
+    name: postfix
+    state: started
+    masked: no
+  tags: ['postfix']
