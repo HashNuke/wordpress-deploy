@@ -25,10 +25,10 @@ if (has_dns_record("{{ domain }}")) {
 <p>
 Hello fellow human,
 <br/>
-Your new site "hello-world" has been setup to be served at <a href="https://{{ domain }}">https://{{ domain }}</a>.
+Your new site "{{ site_title }}" has been setup to be served at <a href="https://{{ domain }}">https://{{ domain }}</a>.
 </p>
 <p>
-Please take some time to read this email. It has been hand-crafted to help you with your new site.
+Your login credentials are mention in the section below. Please take some time to read this email.
 </p>
 
 
@@ -50,7 +50,7 @@ if (has_dns_record("{{ domain }}")) {
 ?>
   <h3>✅ DNS record for domain ({{ domain }})</h3>
   <p>
-    Found A-record or CNAME-record in the DNS for the {{ domain }}.
+    Found a DNS record for the {{ domain }} pointing to a server.
   </p>
 <?php
 } else {
@@ -70,14 +70,14 @@ if (has_dns_record("{{ domain }}")) {
 if ("{{ redirect_domain }}" != "") {
   if (has_dns_record("{{ redirect_domain }}")) {
   ?>
-    <h3>✅ DNS record for domain ({{ redirect_domain }})</h3>
+    <h3>✅ DNS record for redirect domain ({{ redirect_domain }})</h3>
     <p>
       Found A-record or CNAME-record in the DNS for the {{ redirect_domain }}.
     </p>
   <?php
   } else {
   ?>
-    <h3>❌ DNS record for domain ({{ redirect_domain }})</h3>
+    <h3>❌ DNS record for redirect domain ({{ redirect_domain }})</h3>
     <p>
       Please ensure to set a DNS record for {{ redirect_domain }} to point to the server's IP address.
       <br/>
@@ -88,12 +88,18 @@ if ("{{ redirect_domain }}" != "") {
 }
 ?>
 
-<h3>👉 Set a new password</h3>
-<p>Your wordpress admin username is "{{ wordpress_admin_user }}"
-<br/>
-Your password has been set to "{{ default_wordpress_password }}". Please login at <a ="https://{{domain}}/wp-admin.php">https://{{domain}}/wp-admin.php</a> and set a new password.</p>
+<h3>👉 Set a new admin password</h3>
+<h4>
+  Admin url: <a href="https://{{domain}}/wp-admin.php">https://{{domain}}/wp-admin.php</a>
+</h4>
+<h4>
+  Admin username is "{{ wordpress_admin_user }}"
+</h4>
+<h4>
+  Password: <code>{{ default_wordpress_password }}</code>
+</h4>
 <p>
-You can also login to your server as "{{default_user}}" and run this command to get the password that has been set for you:<br/>
+You can also login to your server as "{{default_user}}" and run the below command to get the password that has been set for you:<br/>
 <code>cat /home/{{deploy_user}}/sites/{{site_name}}/config/default-password</code>
 </p>
 

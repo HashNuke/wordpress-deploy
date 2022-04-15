@@ -9,6 +9,12 @@
         state: restarted
       become: "{{ requires_become }}"
 
+    - name: Restart postfix
+      ansible.builtin.service:
+        name: postfix
+        state: restarted
+      become: "{{ requires_become }}"
+
   tasks:
     # Abstracting out versions for updating this later.
     # default_user is not a documented variable. But you could use this to change the name of the deployer user.
@@ -25,33 +31,24 @@
       tags:
         - "wp-install"
         - "wp-plugins"
-
-    - name: "Allow access to 22/tcp on Firewall"
-      community.general.ufw:
-        rule: allow
-        port: '22'
-        proto: tcp
-
-    - name: "Allow access to 80/tcp on Firewall"
-      community.general.ufw:
-        rule: allow
-        port: '80'
-        proto: tcp
-
-    - name: "Allow access to 443/tcp on Firewall"
-      community.general.ufw:
-        rule: allow
-        port: '443'
-        proto: tcp
-
-    - name: Ensure ufw is enabled
-      community.general.ufw:
-        state: enabled
+        - "install-scripts"
+        - "postfix"
 
     - include_tasks:
         file: "tasks/server-base.yml"
         apply:
           become: "{{ requires_become }}"
+
+    - include_tasks:
+        file: "tasks/ufw.yml"
+        apply:
+          become: "{{ requires_become }}"
+
+    - include_tasks:
+        file: "tasks/ufw.yml"
+        apply:
+          become: "{{ requires_become }}"
+      tags: ['postfix']
 
     - name: Create common config dir
       file:
@@ -144,6 +141,33 @@
         name: nginx
         state: started
       become: "{{ requires_become }}"
+
+    - name: Read default wordpress admin password
+      shell: "cat {{site_config_path}}/default-password"
+      register: default_wordpress_password_task
+      become: "{{ requires_become }}"
+      tags: ["install-scripts"]
+
+    - name: Set default_wordpress_password
+      set_fact:
+        default_wordpress_password: "{{ default_wordpress_password_task.stdout }}"
+      tags: ["install-scripts"]
+
+    - name: "Add post-install mail template"
+      ansible.builtin.template:
+        src: "templates/post-install-mail-template.php.j2"
+        dest: "{{ site_config_path }}/post-install-mail-template.php"
+      become: yes
+      become_user: "{{ deploy_user }}"
+      tags: ["install-scripts"]
+
+    - name: "Add post-install mail script"
+      ansible.builtin.template:
+        src: "templates/post-install-mail.php.j2"
+        dest: "{{ site_config_path }}/post-install-mail.php"
+      become: yes
+      become_user: "{{ deploy_user }}"
+      tags: ["install-scripts"]
 
     # # TODO document wordpress_admin_user
     # # TODO document wordpress_admin_email
