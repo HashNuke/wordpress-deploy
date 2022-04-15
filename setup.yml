@@ -84,49 +84,11 @@
       become_user: "{{ deploy_user }}"
       become: "{{ requires_become }}"
 
-    - name: Download wordpress
-      shell: "wp core download --locale=en_US --version={{ wordpress_version | default('latest') }}"
-      args:
-        chdir: "{{ site_content_path }}"
-        creates: "{{ site_content_path }}/wp-login.php"
-      become_user: "{{ deploy_user }}"
-      tags: ["wp-install"]
-
-    # wp config create --dbname=mysite --dbuser=mysite --dbpass=`cat ../config/db-password` --locale=en_US
-    - name: Create wp-config.php
-      shell: "wp config create --dbname={{ site_name }} --dbuser={{ site_name }} --dbpass={{ db_password_task.stdout }} --locale=en_US"
-      args:
-        chdir: "{{ site_content_path }}"
-        creates: "{{ site_content_path }}/wp-config.php"
-      become_user: "{{ deploy_user }}"
-      tags: ["wp-install"]
-
-    - name: Check if wordpress is already installed for site
-      shell: "wp core is-installed || echo not_installed"
-      args:
-        chdir: "{{ site_content_path }}"
-      ignore_errors: True
-      register: wp_install_check
-      changed_when: "'not_installed' in wp_install_check.stdout"
-      become_user: "{{ deploy_user }}"
-      tags: ["wp-install"]
-
-    - name: Generate default password for site
-      shell: "openssl rand -hex 4 > {{site_config_path}}/default-password"
-      args:
-        creates: "{{site_config_path}}/default-password"
-      when: "'not_installed' in wp_install_check.stdout"
-      become_user: "{{ deploy_user }}"
-      tags: ["wp-install"]
-
-    # wp core install --url=example.com --title="Hello World" --admin_user=admin --admin_password="TODO" --admin_email=anything@example.com --skip-email
-    - name: Install the site
-      shell: "wp core install --url={{ domain }} --title=\"{{ site_title }}\" --admin_user={{ wordpress_admin_user | default('admin') }} --admin_password=\"`cat {{site_config_path}}/default-password`\" --admin_email={{wordpress_admin_email}} --skip-email"
-      args:
-        chdir: "{{ site_content_path }}"
-      when: "'not_installed' in wp_install_check.stdout"
-      become: "{{ requires_become }}"
-      become_user: "{{ deploy_user }}"
+    - include_tasks:
+        file: "tasks/install-wordpress.yml"
+        apply:
+          become: "{{ requires_become }}"
+          become_user: "{{ deploy_user }}"
       tags: ["wp-install"]
 
     - name: Install akismet plugin
