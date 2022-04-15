@@ -22,10 +22,6 @@
   changed_when: "'not_installed' in wp_install_check.stdout"
   tags: ["wp-install"]
 
-- debug:
-    var: wp_install_check
-  tags: ["wp-install"]
-
 - name: Generate default password for site
   shell: "openssl rand -hex 4 > {{site_config_path}}/default-password"
   args:
