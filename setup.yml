@@ -26,6 +26,28 @@
         - "wp-install"
         - "wp-plugins"
 
+    - name: "Allow access to 22/tcp on Firewall"
+      community.general.ufw:
+        rule: allow
+        port: '22'
+        proto: tcp
+
+    - name: "Allow access to 80/tcp on Firewall"
+      community.general.ufw:
+        rule: allow
+        port: '80'
+        proto: tcp
+
+    - name: "Allow access to 443/tcp on Firewall"
+      community.general.ufw:
+        rule: allow
+        port: '443'
+        proto: tcp
+
+    - name: Ensure ufw is enabled
+      community.general.ufw:
+        state: enabled
+
     - include_tasks:
         file: "tasks/server-base.yml"
         apply:
