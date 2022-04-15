@@ -49,6 +49,8 @@
       - "mariadb-server"
       - "postfix"
       - "mailutils"
+      - "certbot"
+      - "python3-certbot-nginx"
     update_cache: yes
     state: present
 
