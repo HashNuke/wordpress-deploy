@@ -5,7 +5,7 @@
   register: wp_plugin_check
   become: yes
   become_user: "{{ deploy_user }}"
-  changed_when: "'not_installed' not in wp_plugin_check.stdout"
+  changed_when: "'not_installed' in wp_plugin_check.stdout"
   tags: ["plugin_install"]
 
 - name: Ensure the plugin is installed
