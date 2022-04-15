@@ -218,6 +218,12 @@ Here are some options:
 * This project is designed to be budget-friendly.
 * As for Kubernetes, cloud providers charge separately for control-plane, a persistent volume, and underlying servers. Most sites for putting up landing pages or family blogs do not require such fancy infra.
 
+## How to restore backups?
+
+The backups emailed to you are SQL backups.
+* Lookup on how to restore a MySQL/MariaDB database.
+* The files in `wp-content/uploads` folder are not part of the backups. These would most likely be large to be sent over email. Please ensure to enable disk backups on your cloud provider.
+
 #### How to update Wordpress version?
 
 Once a week, your server will email you about any sites that are running on outdated wordpress versions.
