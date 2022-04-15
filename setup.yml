@@ -22,7 +22,9 @@
         site_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}"
         site_config_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/config"
         site_content_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/content"
-      tags: ['tryout', 'tryout2', 'plugin_install']
+      tags:
+        - "wp-install"
+        - "wp-plugins"
 
     - include_tasks:
         file: "tasks/server-base.yml"
@@ -66,6 +68,7 @@
       shell: "cat {{site_config_path}}/db-password"
       register: db_password_task
       become: "{{ requires_become }}"
+      tags: ["wp-install"]
 
     - name: Create database if does not exist
       shell: "mysql -e \"CREATE DATABASE IF NOT EXISTS {{ site_name }};\""
@@ -87,6 +90,7 @@
         chdir: "{{ site_content_path }}"
         creates: "{{ site_content_path }}/wp-login.php"
       become_user: "{{ deploy_user }}"
+      tags: ["wp-install"]
 
     # wp config create --dbname=mysite --dbuser=mysite --dbpass=`cat ../config/db-password` --locale=en_US
     - name: Create wp-config.php
@@ -95,6 +99,7 @@
         chdir: "{{ site_content_path }}"
         creates: "{{ site_content_path }}/wp-config.php"
       become_user: "{{ deploy_user }}"
+      tags: ["wp-install"]
 
     - name: Check if wordpress is already installed for site
       shell: "wp core is-installed || echo not_installed"
@@ -104,6 +109,7 @@
       register: wp_install_check
       changed_when: "'not_installed' in wp_install_check.stdout"
       become_user: "{{ deploy_user }}"
+      tags: ["wp-install"]
 
     - name: Generate default password for site
       shell: "openssl rand -hex 4 > {{site_config_path}}/default-password"
@@ -111,6 +117,7 @@
         creates: "{{site_config_path}}/default-password"
       when: "'not_installed' in wp_install_check.stdout"
       become_user: "{{ deploy_user }}"
+      tags: ["wp-install"]
 
     # wp core install --url=example.com --title="Hello World" --admin_user=admin --admin_password="TODO" --admin_email=anything@example.com --skip-email
     - name: Install the site
@@ -118,19 +125,21 @@
       args:
         chdir: "{{ site_content_path }}"
       when: "'not_installed' in wp_install_check.stdout"
+      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
+      tags: ["wp-install"]
 
     - name: Install akismet plugin
       include_tasks: "tasks/install-plugin.yml"
       vars:
         plugin_name: "akismet"
-      tags: ["plugin_install"]
+      tags: ["wp-plugins"]
 
     - name: Install wp-super-cache plugin
       include_tasks: "tasks/install-plugin.yml"
       vars:
         plugin_name: "wp-super-cache"
-      tags: ["plugin_install"]
+      tags: ["wp-plugins"]
 
     - name: "Add nginx config for site"
       ansible.builtin.template:

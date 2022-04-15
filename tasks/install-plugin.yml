@@ -6,7 +6,7 @@
   become: yes
   become_user: "{{ deploy_user }}"
   changed_when: "'not_installed' in wp_plugin_check.stdout"
-  tags: ["plugin_install"]
+  tags: ["wp-plugins"]
 
 - name: Ensure the plugin is installed
   shell: "wp plugin install {{plugin_name}} --activate"
@@ -15,4 +15,4 @@
   become: yes
   become_user: "{{ deploy_user }}"
   when: "'not_installed' in wp_plugin_check.stdout"
-  tags: ["plugin_install"]
+  tags: ["wp-plugins"]
