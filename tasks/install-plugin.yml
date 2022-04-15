@@ -1,0 +1,18 @@
+- name: Check if plugin is already installed
+  shell: "wp plugin is-installed {{plugin_name}} || echo not_installed"
+  args:
+    chdir: "{{ site_content_path }}"
+  register: wp_plugin_check
+  become: yes
+  become_user: "{{ deploy_user }}"
+  changed_when: "'not_installed' not in wp_plugin_check.stdout"
+  tags: ["plugin_install"]
+
+- name: Ensure the plugin is installed
+  shell: "wp plugin install {{plugin_name}} --activate"
+  args:
+    chdir: "{{ site_content_path }}"
+  become: yes
+  become_user: "{{ deploy_user }}"
+  when: wp_plugin_check.stdout == "not_installed"
+  tags: ["plugin_install"]
