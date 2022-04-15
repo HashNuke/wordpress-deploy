@@ -155,6 +155,15 @@ email_domain: "mailman.example.com"
 notify_email: "your-email@example.com"
 ```
 
+#### `wordpress_admin_user` and `wordpress_admin_email` (mandatory)
+
+These are mandatory and are used to create the wordpress admin account.
+
+```
+wordpress_admin_user: admin
+wordpress_admin_email: test@example.com
+```
+
 #### `wordpress_version`
 
 * By default, the latest wordpress version is installed.
