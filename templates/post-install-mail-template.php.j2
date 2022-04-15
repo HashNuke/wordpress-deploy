@@ -1,0 +1,128 @@
+<?php
+function has_dns_record($fqdn) {
+  set_error_handler(function() { /* ignore errors */ });
+  $result = dns_get_record($fqdn);
+  restore_error_handler();
+
+  if ($result == false) {
+    return false;
+  }
+
+  foreach ($result as $record) {
+    if ($record["host"] == $fqdn && ($record["type"] == "A" || $record["type"] == "CNAME")) {
+      return true;
+    }
+  }
+  return false;
+}
+
+$domain_dns_record = false;
+if (has_dns_record("{{ domain }}")) {
+  $domain_dns_record = true;
+}
+?>
+
+<p>
+Hello fellow human,
+<br/>
+Your new site "hello-world" has been setup to be served at <a href="https://{{ domain }}">https://{{ domain }}</a>.
+</p>
+<p>
+Please take some time to read this email. It has been hand-crafted to help you with your new site.
+</p>
+
+
+<h2>🧪 New site checklist</h2>
+
+<h3>👉 [IMPORTANT] Add this email address to your contacts</h3>
+<p>
+This will ensure that your email provider does not mark these emails as spam. These are emails from your own server. If you need help, then please check this page
+</p>
+
+<h3>✅ DNS record for email notifications ({{ email_domain }})</h3>
+<p>
+The A-record for {{ email_domain }} was added in the DNS appropriately. Your emails will work fine.
+</p>
+
+
+<?php
+if (has_dns_record("{{ domain }}")) {
+?>
+  <h3>✅ DNS record for domain ({{ domain }})</h3>
+  <p>
+    Found A-record or CNAME-record in the DNS for the {{ domain }}.
+  </p>
+<?php
+} else {
+?>
+  <h3>❌ DNS record for domain ({{ domain }})</h3>
+  <p>
+    Please ensure to set a DNS record for {{ domain }} to point to the server's IP address.
+    <br/>
+    If you have already added it, do not worry, it might take a while to propagate through the internet.
+  </p>
+<?php
+}
+?>
+
+
+<?php
+if ("{{ redirect_domain }}" != "") {
+  if (has_dns_record("{{ redirect_domain }}")) {
+  ?>
+    <h3>✅ DNS record for domain ({{ redirect_domain }})</h3>
+    <p>
+      Found A-record or CNAME-record in the DNS for the {{ redirect_domain }}.
+    </p>
+  <?php
+  } else {
+  ?>
+    <h3>❌ DNS record for domain ({{ redirect_domain }})</h3>
+    <p>
+      Please ensure to set a DNS record for {{ redirect_domain }} to point to the server's IP address.
+      <br/>
+      If you have already added it, do not worry, it might take a while to propagate through the internet.
+    </p>
+  <?php
+  }
+}
+?>
+
+<h3>👉 Set a new password</h3>
+<p>Your wordpress admin username is "{{ wordpress_admin_user }}"
+<br/>
+Your password has been set to "{{ default_wordpress_password }}". Please login at <a ="https://{{domain}}/wp-admin.php">https://{{domain}}/wp-admin.php</a> and set a new password.</p>
+<p>
+You can also login to your server as "{{default_user}}" and run this command to get the password that has been set for you:<br/>
+<code>cat /home/{{deploy_user}}/sites/{{site_name}}/config/default-password</code>
+</p>
+
+<?php
+if ("{{ notify_email }}" != "off" && "{{ notify_email }}" != "") {
+?>
+  <h3>✅ Backups configured</h3>
+  <p>
+    You will receive email backups of your site on {{notify_email}}.
+    <br/>
+    As an example, we created your first backup and attached it along with this email. The instructions to restore sites are available on this page
+  </p>
+<?php
+}
+?>
+
+<hr/>
+
+<h2>❤️ Loved using this project?</h2>
+<p>Here are some things you could do:</p>
+
+<ul>
+  <li>
+    Tweet <a href="https://twitter.com/HashNuke">@HashNuke</a> to let me know about your new site. I would love to hear about them.
+  </li>
+  <li>
+    Please share this project with other people - <a href="https://github.com/HashNuke/wordpress-deploy">https://github.com/HashNuke/wordpress-deploy</a>
+  </li>
+</ul>
+
+<h2>👋 Enjoy your new site</h2>
+<p>And again, don't forget to reset your password 🙏</p>
