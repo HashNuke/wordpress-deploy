@@ -11,6 +11,7 @@ $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
 if(mail($mail_to, $mail_subject, $mail_body, $headers)){
   echo 'Post-install email has been sent.';
+  touch("post-install-mail.state");
 }else{ 
   echo 'Failed to send post-install email.';
 }
