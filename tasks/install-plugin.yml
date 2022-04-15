@@ -14,5 +14,5 @@
     chdir: "{{ site_content_path }}"
   become: yes
   become_user: "{{ deploy_user }}"
-  when: wp_plugin_check.stdout == "not_installed"
+  when: "'not_installed' in wp_plugin_check.stdout"
   tags: ["plugin_install"]

@@ -7,6 +7,7 @@
       ansible.builtin.service:
         name: nginx
         state: restarted
+      become: "{{ requires_become }}"
 
   tasks:
     # Abstracting out versions for updating this later.
@@ -21,10 +22,10 @@
         site_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}"
         site_config_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/config"
         site_content_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/content"
-      tags: ['tryout', 'tryout2']
+      tags: ['tryout', 'tryout2', 'plugin_install']
 
-    - include_tasks: "tasks/server-base.yml"
-      args:
+    - include_tasks:
+        file: "tasks/server-base.yml"
         apply:
           become: "{{ requires_become }}"
 
@@ -33,7 +34,7 @@
         path: "{{ wordpress_deploy_path }}"
         state: directory
         recurse: yes
-      become: yes
+      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
 
     - name: Create site content dir
@@ -42,7 +43,7 @@
         state: directory
         recurse: yes
         owner: "{{ deploy_user }}"
-      become: yes
+      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
 
     - name: Create site config dir
@@ -51,13 +52,14 @@
         state: directory
         recurse: yes
         owner: "{{ deploy_user }}"
-      become: yes
+      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
 
     - name: Create database password
       shell: "openssl rand -hex 6 > {{site_config_path}}/db-password"
       args:
         creates: "{{site_config_path}}/db-password"
+      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
 
     - name: Read database password
@@ -93,24 +95,25 @@
       args:
         chdir: "{{ site_content_path }}"
         creates: "{{ site_content_path }}/wp-config.php"
-      become: yes
+      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
 
     - name: Check if wordpress is already installed for site
-      shell: "wp core is-installed"
+      shell: "wp core is-installed || echo not_installed"
       args:
         chdir: "{{ site_content_path }}"
       ignore_errors: True
       register: wp_install_check
-      become: yes
+      changed_when: "'not_installed' in wp_install_check.stdout"
+      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
 
     - name: Generate default password for site
       shell: "openssl rand -hex 4 > {{site_config_path}}/default-password"
       args:
         creates: "{{site_config_path}}/default-password"
-      when: wp_install_check.rc == 1
-      become: yes
+      when: "'not_installed' in wp_install_check.stdout"
+      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
 
     # wp core install --url=example.com --title="Hello World" --admin_user=admin --admin_password="TODO" --admin_email=anything@example.com --skip-email
@@ -118,8 +121,8 @@
       shell: "wp core install --url={{ domain }} --title=\"{{ site_title }}\" --admin_user={{ wordpress_admin_user | default('admin') }} --admin_password=\"`cat {{site_config_path}}/default-password`\" --admin_email={{wordpress_admin_email}} --skip-email"
       args:
         chdir: "{{ site_content_path }}"
-      when: wp_install_check.rc == 1
-      become: yes
+      when: "'not_installed' in wp_install_check.stdout"
+      become: "{{ requires_become }}"
       become_user: "{{ deploy_user }}"
 
     - name: Install akismet plugin
@@ -138,7 +141,7 @@
       ansible.builtin.template:
         src: "templates/site.nginx-conf.j2"
         dest: "/etc/nginx/sites-enabled/{{ site_name }}"
-      become_user: "{{ deploy_user }}"
+      become: "{{ requires_become }}"
       notify:
         - Restart nginx
 
@@ -146,7 +149,7 @@
       ansible.builtin.service:
         name: nginx
         state: started
-
+      become: "{{ requires_become }}"
 
     # # TODO document wordpress_admin_user
     # # TODO document wordpress_admin_email
