@@ -1,0 +1,15 @@
+# - name: Add backup script
+#  command to run for backups
+
+# - name: Setup backup cron
+
+# Any backup older than 7 days will be deleted
+- name: Daily cron to delete old backups for site
+  ansible.builtin.cron:
+    name: "clean {{ site_name }} backups"
+    minute: "0"
+    hour: "9"
+    job: "find {{ site_backups_path }} -mtime +7 -exec rm {} \;"
+  become: yes
+  become_user: "{{ deploy_user }}"
+  tags: ["install-scripts"]
