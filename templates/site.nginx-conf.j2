@@ -14,7 +14,7 @@ server {
         # See: https://bugs.debian.org/765782
         #
 
-        root /home/deployer/sites/mysite;
+        root /home/deployer/sites/mysite/content;
         index index.php index.html index.htm index.nginx-debian.html;
 
         server_name {{ domain }}{% if redirect_domain is defined %} {{redirect_domain}}{% endif %};
