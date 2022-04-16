@@ -4,7 +4,7 @@
 
 > *🚀 Deploy wordpress sites to $5 servers in under a minute 🚀*
 
-[Install](#install) | [Deploy a site](#deploy-a-site) | [Configuration]docs/configuration.md) | [FAQs](#faqs)
+[Install](#install) | [Deploy a site](#deploy-a-site) | [Configuration](docs/configuration.md) | [FAQs](#faqs)
 
 -----
 
