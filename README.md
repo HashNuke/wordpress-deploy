@@ -108,82 +108,79 @@ This email is coming from the server you just setup. You will get a backup of yo
 
 The supported configuration for sites is listed below. Create a file with your site's nickname like `sites/mysite.yml` with the below configuration.
 
-#### `server` (mandatory)
+```
+##########
+### Site details (mandatory)
 
-Pick a server name from the `hosts` file you created earlier.
+# site_name is the name of the folder where your site will be created.
+# It must be unique on the server.
+# Please do limit this to letters, numbers, underscores and hyphens.
+site_name: mysite
 
-```yaml
+# site_title is the name of the wordpress site
+site_title: "Hello World"
+
+##########
+### Server details (mandatory)
+
+# Which server to use for this site? Check the "hosts" file in the repository.
+# Default value uses "personal"
+#
 server: personal
-```
 
-#### `domain` (mandatory)
+# What is the default user for the server? Notes below to help you.
+#
+# If you use DigitalOcean, the default user is "root"
+# If you use a Canonical image on AWS, the default user is "ubuntu"
+#
+default_user: root
 
-* This is where you will access your site.
-* Ensure to assign add appropriate DNS records to the domain.
+##########
+### Primary and redirect domains
 
-```yaml
+# Primary domain (Mandatory. No default value)
+# This is where you will access your site.
+# Ensure to add appropriate DNS records to the domain.
+#
 domain: "example.com"
-```
 
-#### `redirect_domain`
-
-* This option is to support redirection from another domain to the primary domain.
-* This is especially useful if you have a `www.example.com` that you also want to work as `example.com`.
-* If you specify this option, ensure to add an appropriate DNS record.
-
-```yaml
+# Redirect domain (Not mandatory. No default value)
+# This option is to support redirection from another domain to the primary domain.
+# Ensure to add appropriate DNS records to the domain.
+#
 redirect_domain: "www.example.com"
-```
 
-#### `email_domain`
+##########
+### Wordpress admin user details
 
-* What domain will this server use to send outgoing emails? We just need to look legit to other email servers.
-* Configure any unused subdomain and add a DNS A record pointing to this server.
-* If left unconfigured, then server notifications, email backups and wordpress update alerts will not be configured.
-* Use the same config for all sites on the server.
+# This will be the username of the Wordpress admin user.
+wordpress_admin_user: "admin"
 
-```yaml
-email_domain: "mailman.example.com"
-```
+# This will be the email of the admin user.
+# This email also will be used for notifications and backups.
+wordpress_admin_email: "john@example.com"
 
-#### `notify_email`
+##########
+### Wordpress version
 
-* Email address to send backups, wordpress alerts, server alerts, etc.
-* IF not set, the above functionality will not work.
-
-```yaml
-notify_email: "your-email@example.com"
-```
-
-#### `wordpress_admin_user` and `wordpress_admin_email` (mandatory)
-
-These are mandatory and are used to create the wordpress admin account.
-
-```
-wordpress_admin_user: admin
-wordpress_admin_email: test@example.com
-```
-
-#### `wordpress_version`
-
-* By default, the latest wordpress version is installed.
-* If notifications are enabled, you will receive an email when there is a new wordpress update.
-
-```yaml
-# Use latest
+# By default, the latest wordpress version is installed.
 wordpress_version: "latest"
 
-# Or set it to a specific version
-wordpress_version: "5.9.3"
-```
+##########
+### Domain for email notifications
+#
+# What email will this server use to send outgoing emails?
+# Configure any unused subdomain and add a DNS A record pointing to this server.
+# We just need to look legit to other email servers.
+# Use the same config for all sites on the server.
+#
+email_domain: "mailman.example.com"
 
-### `php_version`
+#########
+# PHP version
 
-* We will update the PHP version once in a while, to the latest version that Wordpress can support.
-* You can optionally set your own PHP version to something that is available in the official ubuntu repos.
-
-```
-php_version: "7.4"
+# You don't need to set this. We will update the version once in a while.
+# php_version: "7.4"
 ```
 
 ## FAQs
