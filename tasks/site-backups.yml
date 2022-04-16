@@ -1,10 +1,44 @@
-# - name: Add backup script
-#  command to run for backups
+- name: Add site backup bash script
+  ansible.builtin.template:
+    src: "templates/backup-site.sh"
+    dest: "{{ site_config_path }}/backup-site.sh"
+  become: yes
+  become_user: "{{ deploy_user }}"
+  tags: ["install-scripts"]
 
-# - name: Setup backup cron
+- name: Add backup email script
+  ansible.builtin.template:
+    src: "templates/mail-backup.php"
+    dest: "{{ site_config_path }}/mail-backup.php"
+  become: yes
+  become_user: "{{ deploy_user }}"
+  tags: ["install-scripts"]
 
-# Any backup older than 7 days will be deleted
-- name: Daily cron to delete old backups for site
+# Generate daily backups in the backup dir
+- name: Setup daily backup cron
+  ansible.builtin.cron:
+    name: "generate {{ site_name }} backup"
+    minute: "45"
+    hour: "8"
+    job: "bash {{site_config_path}}/backup-site.sh"
+  become: yes
+  become_user: "{{ deploy_user }}"
+  tags: ["install-scripts"]
+
+# Every week mail the database backup to the user
+- name: Setup cron to mail weekly backups
+  ansible.builtin.cron:
+    name: "mail weekly {{ site_name }} backup"
+    minute: "0"
+    hour: "9"
+    weekday: "0"
+    job: "php {{site_config_path}}/mail-backup.php"
+  become: yes
+  become_user: "{{ deploy_user }}"
+  tags: ["install-scripts"]
+
+# Any backup older than 7 days will be deleted everyday
+- name: Setup daily cron to delete backups older than 7 days
   ansible.builtin.cron:
     name: "clean {{ site_name }} backups"
     minute: "0"
