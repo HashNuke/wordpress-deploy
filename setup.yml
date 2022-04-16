@@ -172,7 +172,7 @@
 
     - name: "Add post-install mail template"
       ansible.builtin.template:
-        src: "templates/post-install-mail-template.php.j2"
+        src: "templates/post-install-mail-template.php"
         dest: "{{ site_config_path }}/post-install-mail-template.php"
       become: yes
       become_user: "{{ deploy_user }}"
@@ -180,7 +180,7 @@
 
     - name: "Add post-install mail script"
       ansible.builtin.template:
-        src: "templates/post-install-mail.php.j2"
+        src: "templates/post-install-mail.php"
         dest: "{{ site_config_path }}/post-install-mail.php"
       become: yes
       become_user: "{{ deploy_user }}"
