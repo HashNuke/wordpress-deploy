@@ -1,24 +1,21 @@
 <?php
-function has_dns_record($fqdn) {
-  set_error_handler(function() { /* ignore errors */ });
-  $result = dns_get_record($fqdn);
-  restore_error_handler();
-
-  if ($result == false) {
+function does_point_to_server($fqdn) {
+  $domain_ips = gethostbynamel("www.wpd-test.akash.im");
+  if ($domain_ips == false) {
     return false;
   }
 
-  foreach ($result as $record) {
-    if ($record["host"] == $fqdn && ($record["type"] == "A" || $record["type"] == "CNAME")) {
-      return true;
-    }
-  }
-  return false;
-}
+  $output=null;
+  $retval=null;
+  exec("hostname -I", $output, $retval);
+  $hostnames = explode(" ", $output[0]);
+  $server_ip = $hostnames[0];
 
-$domain_dns_record = false;
-if (has_dns_record("{{ domain }}")) {
-  $domain_dns_record = true;
+  if(in_array($server_ip, $domain_ips)) {
+    return true;
+  } else {
+    return false;
+  }
 }
 ?>
 
@@ -59,7 +56,7 @@ The A-record for {{ email_domain }} was added in the DNS appropriately. Your ema
 
 
 <?php
-if (has_dns_record("{{ domain }}")) {
+if (does_point_to_server("{{ domain }}")) {
 ?>
   <h3>✅ DNS record for domain ({{ domain }})</h3>
   <p>
@@ -81,7 +78,7 @@ if (has_dns_record("{{ domain }}")) {
 
 <?php
 if ("{{ redirect_domain }}" != "") {
-  if (has_dns_record("{{ redirect_domain }}")) {
+  if (does_point_to_server("{{ redirect_domain }}")) {
   ?>
     <h3>✅ DNS record for redirect domain ({{ redirect_domain }})</h3>
     <p>
