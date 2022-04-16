@@ -77,7 +77,7 @@
       tags: ["wp-install"]
 
     - include_tasks:
-        file: "tasks/nginx-config.yml"
+        file: "tasks/nginx-setup.yml"
 
     - include_tasks:
         file: "tasks/site-backups.yml"
