@@ -60,9 +60,7 @@ ssh-add ~/.ssh/mykey
 
 ### [Step-3] Add a server to the `hosts` file
 
-Create a host file with the name of the server and IP address like below.
-
-I've named my server as `personal`, but you can name it whatever.
+Create a `hosts` file with the name of the server and IP address like below. I've named my server as `personal`, but you can name it whatever.
 
 ```play
 [personal]
@@ -70,8 +68,6 @@ I've named my server as `personal`, but you can name it whatever.
 ```
 
 ### [Step-4] Create a config file in the `sites` dir
-
-Create a configuration for "mysite" from the sample.
 
 ```
 cp sites/sample.yml sites/mysite.yml
