@@ -1,14 +1,11 @@
 # wordpress-deploy
-
-> **NOTE:** This readme is being written before the project starts :) Please do not look for the code - does not exist.
-
 > *🚀 Deploy wordpress sites to $5 servers in under a minute 🚀*
 
 [Install](#install) | [Deploy a site](#deploy-a-site) | [Configuration options](docs/configuration.md) | [FAQs](docs/faqs.md)
 
 -----
 
-In 2022, Wordpress is still really good for a lot of sites. The new Gutenberg full-site editor is 🔥 good. I hope this project helps you, just like it helps me host my sites.
+In 2022, Wordpress is still really good for a lot of sites. The new Gutenberg full-site editor makes it even better. I hope this project helps you host your sites, just like it helped me.
 
 * 😍 Easy to configure
 * 💰 Budget-friendly setup. Stuff as many sites as you can on your $5 server.
