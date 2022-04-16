@@ -26,7 +26,7 @@ Hello fellow human,
 Your new site "{{ site_title }}" has been setup to be served at <a href="https://{{ domain }}">https://{{ domain }}</a>.
 </p>
 <p>
-Your login credentials are mention in the section below. Please take some time to read this email.
+Your login credentials are mentioned in the section below. Please take some time to read this email.
 </p>
 
 
