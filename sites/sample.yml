@@ -8,63 +8,66 @@
 # https://github.com/HashNuke/wordpress-deploy
 #
 # If you come to love this project, tweet to @HashNuke. It would light up my day.
-#
 
+##########
 ### Site details (mandatory)
-#
+
 # site_name is the name of the folder where your site will be created.
-# It must be unique.
+# It must be unique on the server.
+# Please do limit this to letters, numbers, underscores and hyphens.
 site_name: mysite
 
 # site_title is the name of the wordpress site
 site_title: "Hello World"
 
-### Server (mandatory)
-#
+##########
+### Server details (mandatory)
+
 # Which server to use for this site? Check the "hosts" file in the repository.
 # Default value uses "personal"
 #
 server: personal
 
-### Default server user (mandatory)
-#
-# What is the default user for the server? Below are some notes to help you.
+# What is the default user for the server? Notes below to help you.
 #
 # If you use DigitalOcean, the default user is "root"
 # If you use a Canonical image on AWS, the default user is "ubuntu"
-# [TODO verify] If you used vultr, the default user is "root"
 #
 default_user: root
 
-### Domain (mandatory)
-#
-# Mandatory. No default value.
+##########
+### Primary and redirect domains
+
+# Primary domain (Mandatory. No default value)
 # This is where you will access your site.
-# Ensure to assign add appropriate DNS records to the domain.
-# For more information checkout the project readme.
+# Ensure to add appropriate DNS records to the domain.
 #
 domain: "example.com"
 
-### Redirect domain
-#
-# Not mandatory. No default value.
+# Redirect domain (Not mandatory. No default value)
 # This option is to support redirection from another domain to the primary domain.
 # Ensure to add appropriate DNS records to the domain.
 #
 redirect_domain: "www.example.com"
 
-### Wordpress admin login details
+##########
+### Wordpress admin user details
+
+# This will be the username of the Wordpress admin user.
 wordpress_admin_user: "admin"
+
+# This will be the email of the admin user.
+# This email also will be used for notifications and backups.
 wordpress_admin_email: "john@example.com"
 
+##########
 ### Wordpress version
-#
+
 # By default, the latest wordpress version is installed.
-# If notifications are enabled, you will receive an email when there is a new wordpress update.
-#
 wordpress_version: "latest"
 
-### Email domain
+##########
+### Domain for email notifications
 #
 # What email will this server use to send outgoing emails?
 # Configure any unused subdomain and add a DNS A record pointing to this server.
@@ -73,10 +76,8 @@ wordpress_version: "latest"
 #
 email_domain: "mailman.example.com"
 
-### Notification email
-#
-# Not mandatory. No default value.
-# If the server goes down and cannot be restarted, this address will receive a notification.
-# If this is not set, then server notifications will not be configured.
-#
-notify_email: "your-email@example.com"
+#########
+# PHP version
+
+# You don't need to set this. We will update the version once in a while.
+# php_version: "7.4"
