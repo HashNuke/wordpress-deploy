@@ -1,4 +1,5 @@
 <?php
+
 function does_point_to_server($fqdn) {
   $domain_ips = gethostbynamel("www.wpd-test.akash.im");
   if ($domain_ips == false) {
@@ -98,16 +99,10 @@ if ("{{ redirect_domain }}" != "") {
 }
 ?>
 
-<?php
-if ("{{ notify_email }}" != "off" && "{{ notify_email }}" != "") {
-?>
-  <h3>✅ Backups configured</h3>
-  <p>
-    You will receive email backups of your site on {{notify_email}}.
-  </p>
-<?php
-}
-?>
+<h3>✅ Backups configured</h3>
+<p>
+  You will receive email backups of your site on {{wordpress_admin_email}}.
+</p>
 
 <hr/>
 
