@@ -3,7 +3,7 @@ ob_start();
 include "post-install-mail-template.php";
 $mail_body = ob_get_clean();
 
-$mail_to = "{{ notify_email }}";
+$mail_to = "{{ wordpress_admin_email }}";
 $mail_subject = "Your new wordpress site 😃";
 
 $headers = "MIME-Version: 1.0\r\n";
