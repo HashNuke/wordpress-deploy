@@ -9,7 +9,7 @@ In 2022, Wordpress is still really good for a lot of sites. The new Gutenberg fu
 
 * 😍 Easy to configure
 * 💰 Budget-friendly setup. Stuff as many sites as you can on your $5 server.
-* ♻️ Automated daily backups + weekly backups by email.
+* ♻️ Automated weekly backups by email + daily backups on server.
 * 💪 Firewall protection with `ufw`
 * ⚡️ Pre-installs [WP Super Cache](https://wordpress.org/plugins/wp-super-cache/) for speed optimization
 * 🧪 Tested on [DigitalOcean](https://www.digitalocean.com/)
