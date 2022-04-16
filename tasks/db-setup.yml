@@ -1,0 +1,24 @@
+- name: Create database password
+  shell: "openssl rand -hex 6 > {{site_config_path}}/db-password"
+  args:
+    creates: "{{site_config_path}}/db-password"
+  become: yes
+  become_user: "{{ deploy_user }}"
+
+- name: Read database password
+  shell: "cat {{site_config_path}}/db-password"
+  register: db_password_task
+  become: "{{ requires_become }}"
+  tags: ["wp-install"]
+
+- name: Create database if does not exist
+  shell: "mysql -e \"CREATE DATABASE IF NOT EXISTS {{ site_name }};\""
+  become: "{{ requires_become }}"
+
+- name: Create database user if does not exist
+  shell: "mysql -e \"CREATE USER IF NOT EXISTS '{{ site_name }}'@'localhost' IDENTIFIED BY '{{ db_password_task.stdout }}';\""
+  become: "{{ requires_become }}"
+
+- name: Ensure database user has the right privileges to the site database
+  shell: "mysql -e \"GRANT ALL PRIVILEGES ON {{ site_name }}.* TO '{{ site_name }}'@'localhost';\""
+  become: "{{ requires_become }}"

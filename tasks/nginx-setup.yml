@@ -1,0 +1,26 @@
+- name: Ensure nginx is running
+  ansible.builtin.service:
+    name: nginx
+    state: started
+  become: "{{ requires_become }}"
+
+- name: Get letsencrypt certificate for domain
+  shell: "certbot certonly --agree-tos -m {{ wordpress_admin_email }} --nginx -d {{ domain }}"
+  args:
+    creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+  become: "{{ requires_become }}"
+
+- name: Setup cron to renew certbot certificates everyday at 9am GMT
+  ansible.builtin.cron:
+    name: "certbot renew"
+    minute: "0"
+    hour: "9"
+    job: "certbot renew -q"
+
+- name: Add ssl config for nginx
+  blockinfile:
+    dest: "/etc/nginx/sites-enabled/{{ site_name }}"
+    block: "{{ lookup('template', 'templates/nginx-ssl-config.j2') }}"
+    insertafter: "#SSL-CONFIG-BEGIN"
+  notify:
+    - Restart nginx

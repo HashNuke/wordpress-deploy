@@ -66,30 +66,8 @@
         - "{{ site_config_path }}"
         - "{{ site_content_path }}"
 
-    - name: Create database password
-      shell: "openssl rand -hex 6 > {{site_config_path}}/db-password"
-      args:
-        creates: "{{site_config_path}}/db-password"
-      become: yes
-      become_user: "{{ deploy_user }}"
-
-    - name: Read database password
-      shell: "cat {{site_config_path}}/db-password"
-      register: db_password_task
-      become: "{{ requires_become }}"
-      tags: ["wp-install"]
-
-    - name: Create database if does not exist
-      shell: "mysql -e \"CREATE DATABASE IF NOT EXISTS {{ site_name }};\""
-      become: "{{ requires_become }}"
-
-    - name: Create database user if does not exist
-      shell: "mysql -e \"CREATE USER IF NOT EXISTS '{{ site_name }}'@'localhost' IDENTIFIED BY '{{ db_password_task.stdout }}';\""
-      become: "{{ requires_become }}"
-
-    - name: Ensure database user has the right privileges to the site database
-      shell: "mysql -e \"GRANT ALL PRIVILEGES ON {{ site_name }}.* TO '{{ site_name }}'@'localhost';\""
-      become: "{{ requires_become }}"
+    - include_tasks:
+        file: "tasks/db-setup.yml"
 
     - include_tasks:
         file: "tasks/install-wordpress.yml"
@@ -97,6 +75,16 @@
           become: yes
           become_user: "{{ deploy_user }}"
       tags: ["wp-install"]
+
+    - include_tasks:
+        file: "tasks/nginx-config.yml"
+
+    - include_tasks:
+        file: "tasks/site-backups.yml"
+        apply:
+          become: yes
+          become_user: "{{ deploy_user }}"
+      tags: ["install-scripts"]
 
     - name: Install akismet plugin
       include_tasks:
@@ -127,107 +115,9 @@
         - Restart nginx
       tags: ["install-scripts"]
 
-    - name: Ensure nginx is running
-      ansible.builtin.service:
-        name: nginx
-        state: started
-      become: "{{ requires_become }}"
-
-    - name: Get letsencrypt certificate for domain
-      shell: "certbot certonly --agree-tos -m {{ wordpress_admin_email }} --nginx -d {{ domain }}"
-      args:
-        creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
-      become: "{{ requires_become }}"
-
-    - name: Setup cron to renew certbot certificates everyday at 9am GMT
-      ansible.builtin.cron:
-        name: "certbot renew"
-        minute: "0"
-        hour: "9"
-        job: "certbot renew -q"
-
-    - name: Add ssl config for nginx
-      blockinfile:
-        dest: "/etc/nginx/sites-enabled/{{ site_name }}"
-        block: "{{ lookup('template', 'templates/nginx-ssl-config.j2') }}"
-        insertafter: "#SSL-CONFIG-BEGIN"
-      notify:
-        - Restart nginx
+    - include_tasks:
+        file: "tasks/post-install-mail.yml"
+        apply:
+          become: yes
+          become_user: "{{ deploy_user }}"
       tags: ["install-scripts"]
-
-    - name: Read default wordpress admin password
-      shell: "cat {{site_config_path}}/default-password"
-      register: default_wordpress_password_task
-      become: "{{ requires_become }}"
-      tags: ["install-scripts"]
-
-    # - include_tasks:
-    #     file: "tasks/site-backups.yml"
-    #   tags: ["install-scripts"]
-
-    - name: Set variable default_wordpress_password
-      set_fact:
-        default_wordpress_password: "{{ default_wordpress_password_task.stdout }}"
-      tags: ["install-scripts"]
-
-    - name: "Add post-install mail template"
-      ansible.builtin.template:
-        src: "templates/post-install-mail-template.php"
-        dest: "{{ site_config_path }}/post-install-mail-template.php"
-      become: yes
-      become_user: "{{ deploy_user }}"
-      tags: ["install-scripts"]
-
-    - name: "Add post-install mail script"
-      ansible.builtin.template:
-        src: "templates/post-install-mail.php"
-        dest: "{{ site_config_path }}/post-install-mail.php"
-      become: yes
-      become_user: "{{ deploy_user }}"
-      tags: ["install-scripts"]
-
-    - name: "Send post-install email"
-      shell: "php {{site_config_path}}/post-install-mail.php"
-      args:
-        chdir: "{{ site_config_path }}"
-        creates: "{{ site_config_path }}/post-install-mail.state"
-      become: yes
-      become_user: "{{ deploy_user }}"
-      tags: ["install-scripts"]
-
-    # # TODO document wordpress_admin_user
-    # # TODO document wordpress_admin_email
-    # # TODO notify_email should default to wordpress_admin_email
-    # # TODO server notifications should be disabled only if notify_email is set to off
-    # # TODO what about wordpress multi-site?
-
-    # - name: Setup cron job for backups
-    #   todo:
-
-    # - name: Setup monit
-    #   todo:
-
-    # - name: Add mariadb config for monit
-    #   todo:
-
-    # - name: Add php-fpm config for monit
-    #   todo:
-
-    # - name: Add nginx config for monit
-    #   todo:
-
-    # - name: Disable systemd services
-    #   todo:
-    #   loop:
-    #     - "nginx"
-    #     - "php{{php_version}}-fpm"
-    #     - "mariadb-server"
-
-    # - name: Add site backup script
-    #   todo:
-
-    # - name: Add wordpress update notification script
-    #   todo:
-
-    # - name: Send post-install notification email
-    #   todo:

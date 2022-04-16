@@ -1,0 +1,28 @@
+- name: Read default wordpress admin password
+  shell: "cat {{site_config_path}}/default-password"
+  register: default_wordpress_password_task
+  tags: ["install-scripts"]
+
+- name: Set variable default_wordpress_password
+  set_fact:
+    default_wordpress_password: "{{ default_wordpress_password_task.stdout }}"
+  tags: ["install-scripts"]
+
+- name: "Add post-install mail template"
+  ansible.builtin.template:
+    src: "templates/post-install-mail-template.php"
+    dest: "{{ site_config_path }}/post-install-mail-template.php"
+  tags: ["install-scripts"]
+
+- name: "Add post-install mail script"
+  ansible.builtin.template:
+    src: "templates/post-install-mail.php"
+    dest: "{{ site_config_path }}/post-install-mail.php"
+  tags: ["install-scripts"]
+
+- name: "Send post-install email"
+  shell: "php {{site_config_path}}/post-install-mail.php"
+  args:
+    chdir: "{{ site_config_path }}"
+    creates: "{{ site_config_path }}/post-install-mail.state"
+  tags: ["install-scripts"]
