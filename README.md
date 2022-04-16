@@ -77,7 +77,7 @@ Create a configuration for "mysite" from the sample.
 cp sites/sample.yml sites/mysite.yml
 ```
 
-> The sample file has detail about configuration options. Give it a read.
+> The sample config file has details about configuration options. Give it a read.
 
 ### [Step-5] Deploy
 
@@ -87,10 +87,14 @@ ansible-playbook setup.yml -i hosts --extra-vars @sites/mysite.yml
 
 > 👉 **[IMPORTANT]** You will receive an email with instructions after your server is setup. Please check your spam for this mail.
 
+## More documentation
+
+* [Configuration Options](docs/configuration.md)
+* [FAQs](docs/faqs.md)
+
 ## License
 
 ```
 Copyright (C) 2022 Akash Manohar John
-
 Check the LICENSE file for more info.
 ```
