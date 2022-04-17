@@ -35,6 +35,13 @@ server: personal
 #
 default_user: root
 
+# The new user which will be used to deploy sites.
+# We keep this separate from the default_user to limit permissions given to the code for the websites.
+# By default, this user will be called "deployer".
+# However you can uncomment the below setting and change this if required.
+#
+# deploy_user: deployer
+
 ##########
 ### Primary and redirect domains
 
