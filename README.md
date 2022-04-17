@@ -5,7 +5,7 @@
 
 -----
 
-In 2022, Wordpress is still really good for a lot of sites. The new Gutenberg full-site editor makes it even better. I hope this project helps you host your sites, just like it helped me.
+Use this to setup blogs for your family or landing pages for your side-projects. (*Hint: Gutenberg editor Full Site Editing is 🔥*)
 
 * 😍 Easy to configure
 * 💰 Budget-friendly setup. Stuff as many sites as you can on your $5 server.
