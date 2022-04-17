@@ -9,7 +9,7 @@ Use this to setup blogs for your family or landing pages for your side-projects.
 
 * 😍 Easy to configure
 * 💰 Budget-friendly setup. Stuff as many sites as you can on your $5 server.
-* ♻️ Automated weekly backups by email + daily backups on server.
+* ♻️ Automated weekly backups by email + daily backups on server ([docs](docs/backups.md))
 * 💪 Firewall protection with `ufw`
 * ⚡️ Pre-installs [WP Super Cache](https://wordpress.org/plugins/wp-super-cache/) for speed optimization
 * 🧪 Tested on [DigitalOcean](https://www.digitalocean.com/)
