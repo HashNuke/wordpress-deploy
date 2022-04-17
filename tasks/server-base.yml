@@ -76,6 +76,25 @@
     group: deployers
     state: present
 
+- name: Create ssh dir for deploy user
+  file:
+    path: "/home/{{ deploy_user }}/.ssh"
+    state: directory
+    recurse: true
+    owner: "{{ deploy_user }}"
+    mode: "600"
+  tags: ['ssh-setup']
+
+- name: "Copy default user authorized_keys to deploy user"
+  ansible.builtin.copy:
+    src: "{{ (default_user == 'root') | ternary('/root', '/home/'+deploy_user) }}/.ssh/authorized_keys"
+    dest: "/home/{{ deploy_user }}/.ssh/authorized_keys"
+    remote_src: yes
+    owner: "{{ deploy_user }}"
+    mode: "600"
+  register: default_user_user_authorized_keys
+  tags: ['ssh-setup']
+
 - name: Update user name in php-fpm conf
   lineinfile:
     path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
@@ -87,3 +106,5 @@
     path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
     search_string: "group = www-data"
     line: "group = deployers"
+  notify:
+    - Restart phpfpm
