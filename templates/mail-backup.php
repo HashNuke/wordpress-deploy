@@ -24,13 +24,13 @@ if (count($db_exports) > 0 && count($full_backups) > 0){
   $html_body .= "<p>";
   $html_body .= "To download the tarball, run the below command from your computer.<br/>";
   $html_body .= "<pre>";
-  $html_body .= "rsync -chavzP --stats {$server_user}:{$backups_path}/{$full_backups[0]} .";
+  $html_body .= "rsync -chavzP --stats {$server_user}:{$full_backups[0]} backup.tar.gz";
   $html_body .= "</pre>";
   $html_body .= "</p>";
 
   $html_body .= "<hr/><p>";
-  $html_body .= "This is a weekly email sent to you every Sunday 9am GMT.";
-  $html_body .= "Daily backups are generated and available for upto 7 days on the server at the following directory<br/>";
+  $html_body .= "This is a weekly email sent to you every Sunday 9am GMT. ";
+  $html_body .= "Daily backups are also generated and available for upto 7 days on the server at the following directory<br/>";
   $html_body .= "<code>{$backups_path}</code>";
   $html_body .= "</p>";
 
