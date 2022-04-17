@@ -104,7 +104,13 @@ if ("{{ redirect_domain }}" != "") {
 
 <h3>✅ Backups configured</h3>
 <p>
-  You will receive backups of your site on the email address {{wordpress_admin_email}}.
+  Database backups of the wordpress site will be mailed to {{wordpress_admin_email}} every Sunday at 9am GMT.
+  <br/>
+  Daily backups are also generated and stored on the server for 7 days. There are also extended backups that include the database export and the uploads folder.
+  <br/>
+  You will find the backups at the following path on the server.
+  <br/>
+  <code>{{ site_backups_path }}</code>
 </p>
 
 <hr/>
