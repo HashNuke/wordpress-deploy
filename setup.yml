@@ -84,6 +84,15 @@
           become_user: "{{ deploy_user }}"
       tags: ["wp-install"]
 
+    - name: "Add nginx config for site"
+      ansible.builtin.template:
+        src: "templates/site.nginx-conf.j2"
+        dest: "/etc/nginx/sites-enabled/{{ site_name }}"
+      become: "{{ requires_become }}"
+      notify:
+        - Restart nginx
+      tags: ["install-scripts"]
+
     - include_tasks:
         file: "tasks/nginx-setup.yml"
 
@@ -113,15 +122,6 @@
       vars:
         plugin_name: "wp-super-cache"
       tags: ["wp-plugins"]
-
-    - name: "Add nginx config for site"
-      ansible.builtin.template:
-        src: "templates/site.nginx-conf.j2"
-        dest: "/etc/nginx/sites-enabled/{{ site_name }}"
-      become: "{{ requires_become }}"
-      notify:
-        - Restart nginx
-      tags: ["install-scripts"]
 
     - include_tasks:
         file: "tasks/post-install-mail.yml"
