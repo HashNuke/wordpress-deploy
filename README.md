@@ -82,22 +82,24 @@ ansible-playbook setup.yml -i hosts --extra-vars @sites/mysite.yml
 
 The wordpress admin user will receive an email with login credentials for the admin user. This email also includes a checklist for your new site.
 
-> **[IMPORTANT]** *If you do not find this email in your inbox, please check your spam folder.*
-
-If you do not get this email, then you can still access the password for the admin user at the following directory:
-
-```
-# Assuming your site_name is "mysite" and deploy_user is "deployer" (default value)
-# Your default admin password can be found at the following path on the server.
-
-/home/deployer/sites/mysite/config/default-password
-```
+> **[IMPORTANT]** *If you do not find this email in your inbox, please check your spam folder. And if you still do not find it then check the instructions below the screenshot.*
 
 ![Post-install email with instructions](docs/images/post-install-email.png)
+
+#### Find default password for admin user
+
+If you do not get an email after setting up a new site, then you can still access the password for the admin user. The default password is stored as a file on the server.
+
+Assuming your site_name is "mysite" and deploy_user is "deployer" (default value), your default admin password can be found at the following path on the server.
+
+```
+/home/deployer/sites/mysite/config/default-password
+```
 
 ## More documentation
 
 * [Configuration Options](docs/configuration.md)
+* [Backups](docs/backups.md)
 * [FAQs](docs/faqs.md)
 
 ## License
