@@ -23,3 +23,5 @@ If your `site_name` is configured as `mysite` and the `deploy_user` is configure
 Every Sunday at 9am GMT, a database backup is mailed to the email address configured as the wordpress admin email. This email also includes instructions about downloading the extended backup.
 
 The backup email looks like below.
+
+![Weekly backup email](images/weekly-backup-email.png)
