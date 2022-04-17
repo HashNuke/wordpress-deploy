@@ -45,8 +45,11 @@ This will ensure that your email provider does not mark these emails as spam. Th
   <br/>
   Password: <code>{{ default_wordpress_password }}</code>
 </h4>
+
 <p>
-You can also login to your server as "{{default_user}}" and run the below command to get the password that has been set for you:<br/>
+We've setup a new "{{deploy_user}}" with the same SSH keys as the default user on the server.
+<br/>
+So you should be able to login to the server as "{{deploy_user}}" and run the below command to get the password that has been set for you:<br/>
 <code>cat /home/{{deploy_user}}/sites/{{site_name}}/config/default-password</code>
 </p>
 
