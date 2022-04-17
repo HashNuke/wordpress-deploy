@@ -104,7 +104,7 @@ if ("{{ redirect_domain }}" != "") {
 
 <h3>✅ Backups configured</h3>
 <p>
-  You will receive email backups of your site on {{wordpress_admin_email}}.
+  You will receive backups of your site on the email address {{wordpress_admin_email}}.
 </p>
 
 <hr/>
