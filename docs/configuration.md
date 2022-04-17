@@ -3,6 +3,17 @@
 The supported configuration for sites is listed below. Create a file with your site's nickname like `sites/mysite.yml` with the below configuration.
 
 ```
+############################
+### wordpress-deploy config
+############################
+#
+# Edit the configuration options below to pick something that works best for your site.
+#
+# For details about configuration options, please check the readme on GitHub readme.
+# https://github.com/HashNuke/wordpress-deploy
+#
+# If you come to love this project, tweet to @HashNuke. It would light up my day.
+
 ##########
 ### Site details (mandatory)
 
@@ -28,6 +39,13 @@ server: personal
 # If you use a Canonical image on AWS, the default user is "ubuntu"
 #
 default_user: root
+
+# The new user which will be used to deploy sites.
+# We keep this separate from the default_user to limit permissions given to the code for the websites.
+# By default, this user will be called "deployer".
+# However you can uncomment the below setting and change this if required.
+#
+# deploy_user: deployer
 
 ##########
 ### Primary and redirect domains
