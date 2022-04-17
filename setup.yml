@@ -15,6 +15,12 @@
         state: restarted
       become: "{{ requires_become }}"
 
+    - name: Restart phpfpm
+      ansible.builtin.service:
+        name: "php{{ php_version }}-fpm"
+        state: restarted
+      become: "{{ requires_become }}"
+
   tasks:
     # Abstracting out versions for updating this later.
     # default_user is not a documented variable. But you could use this to change the name of the deployer user.
@@ -34,11 +40,13 @@
         - "wp-plugins"
         - "install-scripts"
         - "postfix"
+        - "ssh-setup"
 
     - include_tasks:
         file: "tasks/server-base.yml"
         apply:
           become: "{{ requires_become }}"
+      tags: ['ssh-setup']
 
     - name: Configure ufw firewall
       include_tasks:
