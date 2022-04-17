@@ -12,7 +12,7 @@ rsort($full_backups);
 if (count($db_exports) > 0 && count($full_backups) > 0){
   echo "Found a backup to email\n";
 
-  $html_body  = "Hello";
+  $html_body  = "Hello,";
   $html_body .= "<br/>";
   $html_body .= "<p>A database backup for the site {$site_name} has been attached along with this email.</p>";
   $html_body .= "<h3>Instructions to download an extended backup</h3>";
