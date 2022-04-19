@@ -80,7 +80,7 @@ if (does_point_to_server("{{ domain }}")) {
 ?>
 
 
-{% if variable is defined %}
+{% if redirect_domain is defined and redirect_domain %}
 <?php
 if (does_point_to_server("{{ redirect_domain }}"))
 {
