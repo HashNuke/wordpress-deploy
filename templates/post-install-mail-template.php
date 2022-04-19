@@ -80,27 +80,28 @@ if (does_point_to_server("{{ domain }}")) {
 ?>
 
 
+{% if variable is defined %}
 <?php
-if ("{{ redirect_domain }}" != "") {
-  if (does_point_to_server("{{ redirect_domain }}")) {
-  ?>
-    <h3>✅ DNS record for redirect domain ({{ redirect_domain }})</h3>
-    <p>
-      Found DNS record pointing to {{ redirect_domain }}. No action required.
-    </p>
-  <?php
-  } else {
-  ?>
-    <h3>❌ DNS record for redirect domain ({{ redirect_domain }})</h3>
-    <p>
-      Please ensure to set a DNS record for {{ redirect_domain }} to point to the server's IP address.
-      <br/>
-      If you have already added it, do not worry, it might take a while to propagate through the internet.
-    </p>
-  <?php
-  }
+if (does_point_to_server("{{ redirect_domain }}"))
+{
+?>
+  <h3>✅ DNS record for redirect domain ({{ redirect_domain }})</h3>
+  <p>
+    Found DNS record pointing to {{ redirect_domain }}. No action required.
+  </p>
+<?php
+} else {
+?>
+  <h3>❌ DNS record for redirect domain ({{ redirect_domain }})</h3>
+  <p>
+    Please ensure to set a DNS record for {{ redirect_domain }} to point to the server's IP address.
+    <br/>
+    If you have already added it, do not worry, it might take a while to propagate through the internet.
+  </p>
+<?php
 }
 ?>
+{% endif %}
 
 <h3>✅ Backups configured</h3>
 <p>
