@@ -40,7 +40,7 @@ pipenv shell
 
 > Please follow the same order of instructions to avoid issues.
 
-### [Step-1] Create a server with Ubuntu 20.04 (LTS) on your cloud provider
+### [Step-1] Create a server with Ubuntu 22.04 (LTS) on your cloud provider
 
 Ensure to choose SSH key as the authentication method and add the SSH key to your local SSH key agent.
 
