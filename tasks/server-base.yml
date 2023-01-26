@@ -49,7 +49,7 @@
 - name: Update apt package cache and install packages
   apt:
     pkg:
-      - "nginx"
+      - "nginx-full"
       - "ghostscript"
       - "php{{ php_version }}"
       - "php{{ php_version }}-fpm"

@@ -87,7 +87,7 @@
     - name: "Add nginx config for site"
       ansible.builtin.template:
         src: "templates/site.nginx-conf.j2"
-        dest: "/etc/nginx/conf.d/{{ site_name }}.conf"
+        dest: "/etc/nginx/sites-enabled/{{ site_name }}"
       become: "{{ requires_become }}"
       notify:
         - Restart nginx
