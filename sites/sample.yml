@@ -87,4 +87,10 @@ email_domain: "mailman.example.com"
 # PHP version
 
 # You don't need to set this. We will update the version once in a while.
-# php_version: "7.4"
+# php_version: "8.1"
+
+#########
+# MariaDB version
+
+# You don't need to set this. We will update the version once in a while.
+# mariadb_version: "10.10.2"
