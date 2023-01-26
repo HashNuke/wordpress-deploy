@@ -32,8 +32,11 @@ pip3 install pipenv
 # Install python dependencies
 pipenv install
 
-# Start a python virtual environment
+# 👇👇👇 Start a python virtual environment
 pipenv shell
+
+# 👆👆👆 Ensure to run the above command.
+# Else your terminal will not find the "ansible-playbook" command.
 ```
 
 ## Deploy a site
@@ -105,6 +108,6 @@ Assuming your `site_name` is "mysite" and `deploy_user` is "deployer" (default v
 ## License
 
 ```
-Copyright (C) 2022 Akash Manohar John
+Copyright (C) from 2022 till date: Akash Manohar John
 Check the LICENSE file for more info.
 ```
