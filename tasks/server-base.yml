@@ -10,11 +10,13 @@
       - tmux
     state: present
 
-# sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-- name: Fetch MariaDB repo keys
-  ansible.builtin.apt_key:
-    url: https://mariadb.org/mariadb_release_signing_key.asc
-    state: present
+# Reference: https://www.jeffgeerling.com/blog/2022/aptkey-deprecated-debianubuntu-how-fix-ansible
+- name: Add MariaDB apt repository key
+  ansible.builtin.get_url:
+    url: "https://mariadb.org/mariadb_release_signing_key.asc"
+    dest: /etc/apt/trusted.gpg.d/mariadb.asc
+    mode: '0644'
+    # force: true
 
 # sudo add-apt-repository 'deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/10.10.2/ubuntu/ focal main'
 - name: Add MariaDB repo
@@ -22,11 +24,27 @@
     repo: "deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/{{mariadb_version}}/ubuntu {{ansible_facts['lsb']['codename']}} main"
     state: present
 
-# sudo add-apt-repository ppa:nginx/stable
+- name: Add nginx apt repository key
+  ansible.builtin.get_url:
+    url: "https://nginx.org/keys/nginx_signing.key"
+    dest: /etc/apt/trusted.gpg.d/nginx.key
+    mode: '0644'
+
+# http://nginx.org/en/linux_packages.html#Ubuntu
 - name: "Add nginx repo"
   ansible.builtin.apt_repository:
-    repo: "ppa:nginx/stable"
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/nginx.key] http://nginx.org/packages/mainline/ubuntu {{ansible_facts['lsb']['codename']}} nginx"
     state: present
+    filename: "nginx"
+
+# https://launchpad.net/~ondrej/+archive/ubuntu/php
+- name: "Add php repo"
+  ansible.builtin.apt_repository:
+    repo: "ppa:ondrej/php"
+    state: present
+
+- name: Update apt-get repo and cache
+  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
 
 - name: Update apt package cache and install packages
   apt:
@@ -37,7 +55,6 @@
       - "php{{ php_version }}-fpm"
       - "php{{ php_version }}-common"
       - "php{{ php_version }}-curl"
-      - "php{{ php_version }}-json"
       - "php{{ php_version }}-imagick"
       - "php{{ php_version }}-zip"
       - "php{{ php_version }}-mbstring"
