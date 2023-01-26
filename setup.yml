@@ -66,6 +66,7 @@
         path: "{{ item }}"
         state: directory
         recurse: yes
+        group: www-data
       become: yes
       become_user: "{{ deploy_user }}"
       loop:

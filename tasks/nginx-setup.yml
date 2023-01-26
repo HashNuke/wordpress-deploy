@@ -4,12 +4,6 @@
     state: started
   become: "{{ requires_become }}"
 
-- name: Update user and group in nginx conf
-  lineinfile:
-    path: "/etc/nginx/nginx.conf"
-    search_string: "user www-data;"
-    line: "user {{ deploy_user }} deployers;"
-
 # certbot certonly --agree-tos -m test@example.com --nginx -d example.com -d www.example.com
 - name: Get letsencrypt certificate for domain
   shell: "certbot certonly --agree-tos -m {{ wordpress_admin_email }} --nginx -d {{ domain }}"

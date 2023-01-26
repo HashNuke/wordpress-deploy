@@ -90,7 +90,7 @@
 - name: Create deployer user
   user:
     name: deployer
-    group: deployers
+    group: deployers,www-data
     state: present
 
 - name: Create ssh dir for deploy user
@@ -111,17 +111,3 @@
     mode: "700"
   register: default_user_user_authorized_keys
   tags: ['ssh-setup']
-
-- name: Update user name in php-fpm conf
-  lineinfile:
-    path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
-    search_string: "user = www-data"
-    line: "user = {{ deploy_user }}"
-
-- name: Update group name in php-fpm conf
-  lineinfile:
-    path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
-    search_string: "group = www-data"
-    line: "group = deployers"
-  notify:
-    - Restart phpfpm
