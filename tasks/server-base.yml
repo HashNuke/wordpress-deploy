@@ -16,10 +16,10 @@
     url: https://mariadb.org/mariadb_release_signing_key.asc
     state: present
 
-# sudo add-apt-repository 'deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/10.8.2/ubuntu/ focal main'
+# sudo add-apt-repository 'deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/10.10.2/ubuntu/ focal main'
 - name: Add MariaDB repo
   ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/{{mariadb_version}}/ubuntu focal main"
+    repo: "deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/{{mariadb_version}}/ubuntu {{ansible_facts['lsb']['codename']}} main"
     state: present
 
 # sudo add-apt-repository ppa:nginx/stable
