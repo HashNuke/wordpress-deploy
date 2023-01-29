@@ -73,7 +73,7 @@ server {
                 log_not_found off;
         }
 
-        {% if plausible_proxy %}
+        {% if plausible_proxy == true %}
         ### Plausible nginx proxy config
         # https://plausible.io/docs/proxy/guides/nginx
         #

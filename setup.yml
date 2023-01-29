@@ -67,9 +67,8 @@
         path: "{{ item }}"
         state: directory
         recurse: yes
+        owner: "{{ deploy_user }}"
         group: www-data
-      become: yes
-      become_user: "{{ deploy_user }}"
       loop:
         - "{{ wordpress_deploy_path }}"
         - "{{ site_backups_path }}"
@@ -141,3 +140,5 @@
         path: "/usr/lib/tmpfiles.d/nginx-cache.conf"
         line: "D /run/nginx-cache 0755 root root -"
         create: yes
+      notify:
+        - Restart nginx
