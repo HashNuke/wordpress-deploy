@@ -67,7 +67,7 @@
         path: "{{ item }}"
         state: directory
         recurse: yes
-        owner: "{{ deploy_user }}"
+        owner: "www-data"
         group: www-data
       loop:
         - "{{ wordpress_deploy_path }}"
