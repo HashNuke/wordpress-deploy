@@ -72,6 +72,41 @@ server {
                 access_log off;
                 log_not_found off;
         }
+
+        {% if plausible_proxy %}
+        ### Plausible nginx proxy config
+        # https://plausible.io/docs/proxy/guides/nginx
+        #
+
+        location = /js/script.js {
+                # Change this if you use a different variant of the script
+                proxy_pass https://plausible.io/js/script.js;
+                proxy_set_header Host plausible.io;
+
+
+                # Tiny, negligible performance improvement. Very optional.
+                proxy_buffering on;
+
+                # Cache the script for 6 hours, as long as plausible.io returns a valid response
+                proxy_cache jscache;
+                proxy_cache_valid 200 6h;
+                proxy_cache_use_stale updating error timeout invalid_header http_500;
+
+                # Optional. Adds a header to tell if you got a cache hit or miss
+                add_header X-Cache $upstream_cache_status;
+        }
+
+        location = /api/event {
+                proxy_pass https://plausible.io/api/event;
+                proxy_set_header Host plausible.io;
+                proxy_buffering on;
+                proxy_http_version 1.1;
+
+                proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header X-Forwarded-Host  $host;
+        }
+        {% endif %}
 }
 
 {% if redirect_with_301 is defined %}
