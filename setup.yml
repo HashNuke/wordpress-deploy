@@ -35,6 +35,7 @@
         site_config_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/config"
         site_content_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/content"
         site_backups_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/backups"
+        nginx_proxy_cache_path: "/var/run/nginx-cache"
       tags:
         - "wp-install"
         - "wp-plugins"

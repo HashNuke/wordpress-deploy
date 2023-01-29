@@ -1,3 +1,19 @@
+- name: Create nginx proxy_cache path
+  file:
+    path: "{{ nginx_proxy_cache_path }}"
+    state: directory
+    recurse: yes
+    group: www-data
+  become: "{{ requires_become }}"
+
+- name: "Add nginx proxy_cache config"
+  ansible.builtin.template:
+    src: "templates/proxy-cache.nginx.j2"
+    dest: "/etc/nginx/conf.d/proxy-cache.conf"
+  become: "{{ requires_become }}"
+  notify:
+    - Restart nginx
+
 - name: Ensure nginx is running
   ansible.builtin.service:
     name: nginx
