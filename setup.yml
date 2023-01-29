@@ -131,3 +131,13 @@
           become: yes
           become_user: "{{ deploy_user }}"
       tags: ["install-scripts"]
+
+    # From Plausible.io docs. https://plausible.io/docs/proxy/guides/nginx
+    # Not sure why /run is used instead of /var/run
+    # But atleast on Ubuntu 22.04, both seem to be the same directories.
+    #
+    - name: Add a line to a file if the file does not exist, without passing regexp
+      ansible.builtin.lineinfile:
+        path: "/usr/lib/tmpfiles.d/nginx-cache.conf"
+        line: "echo "D /run/nginx-cache 0755 root root -"
+        create: yes
