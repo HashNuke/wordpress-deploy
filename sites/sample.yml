@@ -94,3 +94,13 @@ email_domain: "mailman.example.com"
 
 # You don't need to set this. We will update the version once in a while.
 # mariadb_version: "10.10.2"
+
+#########
+# Plausible nginx proxy
+#
+# If you use Plausible, I would recommend enabling this.
+# You have to modify your script tag according to Step-2 on the below documentation
+# https://plausible.io/docs/proxy/guides/nginx
+#
+#
+plausible_proxy: false
