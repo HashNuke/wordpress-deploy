@@ -90,7 +90,7 @@
 - name: Create deployer user
   user:
     name: deployer
-    group: deployers,www-data
+    groups: deployers,www-data
     state: present
 
 - name: Create ssh dir for deploy user
