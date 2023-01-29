@@ -139,5 +139,5 @@
     - name: Add a line to a file if the file does not exist, without passing regexp
       ansible.builtin.lineinfile:
         path: "/usr/lib/tmpfiles.d/nginx-cache.conf"
-        line: "echo "D /run/nginx-cache 0755 root root -"
+        line: "D /run/nginx-cache 0755 root root -"
         create: yes
