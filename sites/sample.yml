@@ -87,8 +87,11 @@ email_domain: "mailman.example.com"
 #########
 # MariaDB version
 
-# You don't need to set this. We will update the version once in a while.
-# mariadb_version: "10.10.2"
+# We will update the version once in a while.
+# But if you prefer to set this manually, then the format is "major.minor".
+# Please do not specify a specific patch version.
+#
+# mariadb_version: "10.10"
 
 #########
 # Plausible nginx proxy

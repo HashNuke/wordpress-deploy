@@ -21,7 +21,7 @@
 # sudo add-apt-repository 'deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/10.10.2/ubuntu/ focal main'
 - name: Add MariaDB repo
   ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64,arm64] http://mariadb.mirror.globo.tech/repo/{{mariadb_version}}/ubuntu {{ansible_facts['lsb']['codename']}} main"
+    repo: "deb [arch=amd64,arm64] http://deb.mariadb.org/{{mariadb_version}}/ubuntu {{ansible_facts['lsb']['codename']}} main"
     state: present
 
 - name: Add nginx apt repository key
