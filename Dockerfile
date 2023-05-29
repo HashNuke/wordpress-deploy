@@ -8,8 +8,6 @@ RUN pip install --upgrade pip && \
     pip install ansible==7.6.0 && \
     pip install ansible==7.6.0 pyyaml==6.0
 
-RUN mkdir -p /run/host-services/
-
 COPY . /app
 WORKDIR /app
 
