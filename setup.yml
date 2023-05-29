@@ -1,5 +1,5 @@
 - name: "Setup wordpress"
-  hosts: "{{ server | default('personal') }}"
+  hosts: "all"
   remote_user: "{{ default_user }}"
 
   handlers:
@@ -29,7 +29,7 @@
         requires_become: "{{ (default_user == 'root') | ternary('no', 'yes') }}"
         deploy_user: "{{ deploy_user | default('deployer') }}"
         php_version: "{{ php_version | default('8.1') }}"
-        mariadb_version: "{{ mariadb_version | default('10.10.2') }}"
+        mariadb_version: "{{ mariadb_version | default('10.10') }}"
         wordpress_deploy_path: "/home/{{ deploy_user | default('deployer') }}/wordpress-deploy"
         site_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}"
         site_config_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/config"

@@ -23,11 +23,6 @@ site_title: "Hello World"
 ##########
 ### Server details (mandatory)
 
-# Which server to use for this site? Check the "hosts" file in the repository.
-# Default value uses "personal"
-#
-server: personal
-
 # What is the default user for the server? Notes below to help you.
 #
 # If you use DigitalOcean, the default user is "root"

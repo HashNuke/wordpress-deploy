@@ -59,27 +59,24 @@ ssh-add ~/.ssh/mykey
 
 > These two can be the same domain/subdomain.
 
-### [Step-3] Add a server to the `hosts` file
-
-Create a `hosts` file with the name of the server and IP address like below. I've named my server as `personal`, but you can name it whatever.
-
-```play
-[personal]
-1.2.3.4
-```
-
-### [Step-4] Create a config file in the `sites` dir
+### [Step-3] Create a config file in the `sites` dir
 
 ```
-cp sites/sample.yml sites/mysite.yml
+cp sites/sample.yml path/to/mysite.yml
 ```
 
 > The sample config file has details about configuration options. Give it a read.
 
-### [Step-5] Deploy
+### [Step-4] Deploy
+
+Now let's deploy this site the server `example.com`. You can also use an IP address like `1.2.3.4`
+
+**PLEASE do not ignore the comma. Notice the value is "example.com," in the command below.**
 
 ```
-ansible-playbook setup.yml -i hosts --extra-vars @sites/mysite.yml
+ansible-playbook setup.yml \
+-i example.com, \
+--extra-vars @/path/to/mysite.yml
 ```
 
 ### 👉 Login credentials + New site checklist 😃
