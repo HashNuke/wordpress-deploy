@@ -1,5 +1,5 @@
 - name: "Setup wordpress"
-  hosts: "{{ server | default('personal') }}"
+  hosts: "{{ server | default('webserver') }}"
   remote_user: "{{ default_user }}"
 
   handlers:
