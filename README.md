@@ -59,7 +59,7 @@ ssh-add ~/.ssh/mykey
 
 > These two can be the same domain/subdomain.
 
-### [Step-3] Create a config file in the `sites` dir
+### [Step-3] Create a config file for the site
 
 ```
 cp sites/sample.yml path/to/mysite.yml
@@ -75,7 +75,7 @@ Now let's deploy this site the server `example.com`. You can also use an IP addr
 
 ```
 ansible-playbook setup.yml \
--i example.com, \
+-i "example.com," \
 --extra-vars @/path/to/mysite.yml
 ```
 
