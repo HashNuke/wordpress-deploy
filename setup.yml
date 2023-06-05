@@ -27,14 +27,13 @@
     - name: Set versions and other defaults
       ansible.builtin.set_fact:
         requires_become: "{{ (default_user == 'root') | ternary('no', 'yes') }}"
-        deploy_user: "{{ deploy_user | default('deployer') }}"
         php_version: "{{ php_version | default('8.1') }}"
         mariadb_version: "{{ mariadb_version | default('10.11') }}"
-        wordpress_deploy_path: "/home/{{ deploy_user | default('deployer') }}/wordpress-deploy"
-        site_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}"
-        site_config_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/config"
-        site_content_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/content"
-        site_backups_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}/backups"
+        wordpress_deploy_path: "/wordpress-deploy"
+        site_path: "/sites/{{ site_name }}"
+        site_config_path: "/sites/{{ site_name }}/config"
+        site_content_path: "/sites/{{ site_name }}/content"
+        site_backups_path: "/sites/{{ site_name }}/backups"
         nginx_proxy_cache_path: "/var/run/nginx-cache"
       tags:
         - "wp-install"
@@ -43,30 +42,28 @@
         - "postfix"
         - "ssh-setup"
 
-    - include_tasks:
-        file: "tasks/server-base.yml"
-        apply:
-          become: "{{ requires_become }}"
+    - name: "Server setup tasks"
+      become: "{{ requires_become }}"
       tags: ['ssh-setup']
+      block:
+        - include_tasks:
+            file: "tasks/server-base.yml"
 
-    - name: Configure ufw firewall
-      include_tasks:
-        file: "tasks/ufw.yml"
-        apply:
-          become: "{{ requires_become }}"
+        - name: Configure ufw firewall
+          include_tasks:
+            file: "tasks/ufw.yml"
 
-    - name: Configure postfix
-      include_tasks:
-        file: "tasks/postfix.yml"
-        apply:
-          become: "{{ requires_become }}"
-      tags: ['postfix']
+        - name: Configure postfix
+          include_tasks:
+            file: "tasks/postfix.yml"
+          tags: ['postfix']
 
     - name: Create required directories
       file:
         path: "{{ item }}"
         state: directory
         recurse: yes
+        mode: "0775"
         owner: "www-data"
         group: www-data
       loop:
@@ -80,16 +77,12 @@
 
     - include_tasks:
         file: "tasks/install-wordpress.yml"
-        apply:
-          become: yes
-          become_user: "{{ deploy_user }}"
       tags: ["wp-install"]
 
     - name: "Add nginx config for site"
       ansible.builtin.template:
         src: "templates/site.nginx-conf.j2"
         dest: "/etc/nginx/sites-enabled/{{ site_name }}"
-      become: "{{ requires_become }}"
       notify:
         - Restart nginx
       tags: ["install-scripts"]
