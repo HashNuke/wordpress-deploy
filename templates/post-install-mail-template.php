@@ -32,7 +32,7 @@ Your login credentials are mentioned in the section below. Please take some time
 
 <h2>🧪 New site checklist</h2>
 
-<h3>👉 Add this email address to your email contacts ({{ansible_user}}@{{email_domain}})</h3>
+<h3>👉 Add this email address to your email contacts (www-data@{{email_domain}})</h3>
 <p>
 This will ensure that your email provider does not mark these emails as spam. These are emails from your own server.
 </p>
@@ -47,10 +47,10 @@ This will ensure that your email provider does not mark these emails as spam. Th
 </h4>
 
 <p>
-A new "{{ansible_user}}" user with the same SSH keys as the default user has been setup on the server.
+Site has been setup at "{{site_path}}".
 <br/>
-So you should be able to login to the server as "{{ansible_user}}" and run the below command to get the password that has been set for you:<br/>
-<code>cat /sites/{{site_name}}/config/default-password</code>
+You can login to the server and run the below command to get the password that has been set for you:<br/>
+<code>cat {{site_config_path}}/default-password</code>
 </p>
 
 <h3>✅ DNS record for email notifications ({{ email_domain }})</h3>
@@ -114,9 +114,14 @@ if (does_point_to_server("{{ redirect_domain }}"))
   <code>{{ site_backups_path }}</code>
 </p>
 
+<h3>✅ Secured</h3>
+<p>
+  All of the site and the supporting scripts run as "www-data" user. They do not have root permissions or escalation privileges.
+</p>
+
 <hr/>
 
-<h2>❤️ Loved using this project?</h2>
+<h2>❤️ Like this project?</h2>
 <p>Here are some things you could do:</p>
 
 <ul>
