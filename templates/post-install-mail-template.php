@@ -1,7 +1,7 @@
 <?php
 
 function does_point_to_server($fqdn) {
-  $domain_ips = gethostbynamel$fqdn);
+  $domain_ips = gethostbynamel($fqdn);
   if ($domain_ips == false) {
     return false;
   }
