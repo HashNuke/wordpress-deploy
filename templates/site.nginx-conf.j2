@@ -5,7 +5,7 @@ server {
         #SSL-CONFIG-BEGIN
         #SSL-CONFIG-END
 
-        root /home/deployer/sites/{{site_name}}/content;
+        root {{site_content_path}};
         index index.php index.html index.htm index.nginx-debian.html;
 
         server_name {{ domain }}{% if redirect_domain is defined %} {{redirect_domain}}{% endif %};
