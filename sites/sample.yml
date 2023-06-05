@@ -14,7 +14,7 @@
 
 # site_name is the name of the folder where your site will be created.
 # It must be unique on the server.
-# Please do limit this to letters, numbers, underscores and hyphens.
+# Please do limit this to letters, numbers and underscores.
 site_name: mysite
 
 # site_title is the name of the wordpress site
