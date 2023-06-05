@@ -31,4 +31,6 @@
   args:
     chdir: "{{ site_config_path }}"
     creates: "{{ site_config_path }}/post-install-mail.state"
+  become: yes
+  become_user: "www-data"
   tags: ["install-scripts"]
