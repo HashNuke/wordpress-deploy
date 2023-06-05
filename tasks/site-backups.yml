@@ -2,14 +2,18 @@
   ansible.builtin.template:
     src: "templates/backup-site.sh"
     dest: "{{ site_config_path }}/backup-site.sh"
-  become: yes
-  become_user: "{{ deploy_user }}"
+    group: "www-data"
+    owner: "www-data"
+    mode: "0775"
   tags: ["install-scripts"]
 
 - name: Add backup email script
   ansible.builtin.template:
     src: "templates/mail-backup.php"
     dest: "{{ site_config_path }}/mail-backup.php"
+    group: "www-data"
+    owner: "www-data"
+    mode: "0775"
   tags: ["install-scripts"]
 
 # Generate daily backups in the backup dir
@@ -19,6 +23,7 @@
     minute: "45"
     hour: "8"
     job: "bash {{site_config_path}}/backup-site.sh"
+    user: "www-data"
   tags: ["install-scripts"]
 
 # Every week mail the database backup to the user
@@ -29,6 +34,7 @@
     hour: "9"
     weekday: "0"
     job: "php {{site_config_path}}/mail-backup.php"
+    user: "www-data"
   tags: ["install-scripts"]
 
 # Any backup older than 7 days will be deleted everyday
@@ -38,4 +44,5 @@
     minute: "0"
     hour: "9"
     job: "find {{ site_backups_path }} -mtime +7 -exec echo {} \\;"
+    user: "www-data"
   tags: ["install-scripts"]

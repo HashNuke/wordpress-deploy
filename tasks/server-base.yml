@@ -81,33 +81,3 @@
     url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
     dest: "/usr/local/bin/wp"
     mode: "755"
-
-- name: Create a deployers user group
-  group:
-    name: deployers
-    state: present
-
-- name: Create deployer user
-  user:
-    name: deployer
-    groups: deployers,www-data
-    state: present
-
-- name: Create ssh dir for deploy user
-  file:
-    path: "/home/{{ deploy_user }}/.ssh"
-    state: directory
-    recurse: true
-    owner: "{{ deploy_user }}"
-    mode: "700"
-  tags: ['ssh-setup']
-
-- name: "Copy default user authorized_keys to deploy user"
-  ansible.builtin.copy:
-    src: "{{ (default_user == 'root') | ternary('/root', '/home/'+deploy_user) }}/.ssh/authorized_keys"
-    dest: "/home/{{ deploy_user }}/.ssh/authorized_keys"
-    remote_src: yes
-    owner: "{{ deploy_user }}"
-    mode: "700"
-  register: default_user_user_authorized_keys
-  tags: ['ssh-setup']

@@ -14,30 +14,23 @@
     - name: Set versions and other defaults
       ansible.builtin.set_fact:
         requires_become: "{{ (default_user == 'root') | ternary('no', 'yes') }}"
-        deploy_user: "{{ deploy_user | default('deployer') }}"
-        site_path: "/home/{{ deploy_user | default('deployer') }}/sites/{{ site_name }}"
+        site_path: "/sites/{{ site_name }}"
 
     - name: Remove site dir
       file:
         path: "{{ site_path }}"
         state: absent
-      become: yes
-      become_user: "{{ deploy_user }}"
 
     - name: Drop database if it exists
       shell: "mysql -e \"DROP DATABASE IF EXISTS {{ site_name }};\""
-      become: "{{ requires_become }}"
 
     - name: Drop database user if it exists
       shell: "mysql -e \"DROP USER IF EXISTS '{{ site_name }}'@'localhost';\""
-      become_user: "{{ deploy_user }}"
-      become: "{{ requires_become }}"
 
     - name: Remove nginx config for site
       file:
         name: "/etc/nginx/sites-enabled/{{ site_name }}"
         state: absent
-      become: "{{ requires_become }}"
       notify:
         - Restart nginx
 

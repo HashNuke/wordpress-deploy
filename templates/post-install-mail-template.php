@@ -32,7 +32,7 @@ Your login credentials are mentioned in the section below. Please take some time
 
 <h2>🧪 New site checklist</h2>
 
-<h3>👉 Add this email address to your email contacts ({{deploy_user}}@{{email_domain}})</h3>
+<h3>👉 Add this email address to your email contacts ({{ansible_user}}@{{email_domain}})</h3>
 <p>
 This will ensure that your email provider does not mark these emails as spam. These are emails from your own server.
 </p>
@@ -47,10 +47,10 @@ This will ensure that your email provider does not mark these emails as spam. Th
 </h4>
 
 <p>
-A new "{{deploy_user}}" user with the same SSH keys as the default user has been setup on the server.
+A new "{{ansible_user}}" user with the same SSH keys as the default user has been setup on the server.
 <br/>
-So you should be able to login to the server as "{{deploy_user}}" and run the below command to get the password that has been set for you:<br/>
-<code>cat /home/{{deploy_user}}/sites/{{site_name}}/config/default-password</code>
+So you should be able to login to the server as "{{ansible_user}}" and run the below command to get the password that has been set for you:<br/>
+<code>cat /sites/{{site_name}}/config/default-password</code>
 </p>
 
 <h3>✅ DNS record for email notifications ({{ email_domain }})</h3>

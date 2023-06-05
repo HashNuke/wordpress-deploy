@@ -2,8 +2,6 @@
   shell: "openssl rand -hex 6 > {{site_config_path}}/db-password"
   args:
     creates: "{{site_config_path}}/db-password"
-  become: yes
-  become_user: "{{ deploy_user }}"
 
 - name: Read database password
   shell: "cat {{site_config_path}}/db-password"

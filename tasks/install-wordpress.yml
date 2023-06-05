@@ -1,8 +1,17 @@
+- name: Set ownership of /var/www to www-data
+  file:
+    path: "/var/www"
+    owner: "www-data"
+    group: "www-data"
+    recurse: yes
+
 - name: Download wordpress
   shell: "wp core download --locale=en_US --version={{ wordpress_version | default('latest') }}"
   args:
     chdir: "{{ site_content_path }}"
     creates: "{{ site_content_path }}/wp-login.php"
+  become: yes
+  become_user: "www-data"
   tags: ["wp-install"]
 
 # wp config create --dbname=mysite --dbuser=mysite --dbpass=`cat ../config/db-password` --locale=en_US
@@ -11,12 +20,16 @@
   args:
     chdir: "{{ site_content_path }}"
     creates: "{{ site_content_path }}/wp-config.php"
+  become: yes
+  become_user: "www-data"
   tags: ["wp-install"]
 
 - name: Check if wordpress is already installed for site
   shell: "wp core is-installed || echo not_installed"
   args:
     chdir: "{{ site_content_path }}"
+  become: yes
+  become_user: "www-data"
   ignore_errors: True
   register: wp_install_check
   changed_when: "'not_installed' in wp_install_check.stdout"
@@ -26,6 +39,8 @@
   shell: "openssl rand -hex 4 > {{site_config_path}}/default-password"
   args:
     creates: "{{site_config_path}}/default-password"
+  become: yes
+  become_user: "www-data"
   when: "'not_installed' in wp_install_check.stdout"
   tags: ["wp-install"]
 
@@ -34,5 +49,8 @@
   shell: "wp core install --url={{ domain }} --title=\"{{ site_title }}\" --admin_user={{ wordpress_admin_user | default('admin') }} --admin_email={{wordpress_admin_email}} --skip-email --prompt=admin_password < {{site_config_path}}/default-password"
   args:
     chdir: "{{ site_content_path }}"
+  become: yes
+  become_user: "www-data"
+
   when: "'not_installed' in wp_install_check.stdout"
   tags: ["wp-install"]

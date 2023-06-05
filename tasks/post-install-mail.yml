@@ -12,12 +12,18 @@
   ansible.builtin.template:
     src: "templates/post-install-mail-template.php"
     dest: "{{ site_config_path }}/post-install-mail-template.php"
+    group: "www-data"
+    owner: "www-data"
+    mode: "0775"
   tags: ["install-scripts"]
 
 - name: "Add post-install mail script"
   ansible.builtin.template:
     src: "templates/post-install-mail.php"
     dest: "{{ site_config_path }}/post-install-mail.php"
+    group: "www-data"
+    owner: "www-data"
+    mode: "0775"
   tags: ["install-scripts"]
 
 - name: "Send post-install email"

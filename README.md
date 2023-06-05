@@ -91,10 +91,10 @@ The wordpress admin user will receive an email with login credentials for the ad
 
 If you do not get an email after setting up a new site, then you can still access the password for the admin user. The default password is stored as a file on the server.
 
-Assuming your `site_name` is "mysite" and `deploy_user` is "deployer" (default value), your default wordpress admin password can be found at the following path on the server.
+Assuming your `site_name` is "mysite", your default wordpress admin password can be found at the following path on the server.
 
 ```
-/home/deployer/sites/mysite/config/default-password
+/sites/mysite/config/default-password
 ```
 
 ## More documentation

@@ -99,17 +99,11 @@
 
     - include_tasks:
         file: "tasks/site-backups.yml"
-        apply:
-          become: yes
-          become_user: "{{ deploy_user }}"
       tags: ["install-scripts"]
 
     - name: Install akismet plugin
       include_tasks:
         file: "tasks/install-plugin.yml"
-        apply:
-          become: yes
-          become_user: "{{ deploy_user }}"
       vars:
         plugin_name: "akismet"
       tags: ["wp-plugins"]
@@ -117,18 +111,12 @@
     - name: Install wp-super-cache plugin
       include_tasks:
         file: "tasks/install-plugin.yml"
-        apply:
-          become: yes
-          become_user: "{{ deploy_user }}"
       vars:
         plugin_name: "wp-super-cache"
       tags: ["wp-plugins"]
 
     - include_tasks:
         file: "tasks/post-install-mail.yml"
-        apply:
-          become: yes
-          become_user: "{{ deploy_user }}"
       tags: ["install-scripts"]
 
     # From Plausible.io docs. https://plausible.io/docs/proxy/guides/nginx

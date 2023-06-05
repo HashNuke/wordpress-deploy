@@ -12,10 +12,10 @@ Backups older than 7 days are deleted.
 
 #### Location of the backups
 
-If your `site_name` is configured as `mysite` and the `deploy_user` is configured as `deployer` (also the default value), then the backup for the site can be found at the following directory:
+If your `site_name` is configured as `mysite`, then the backup for the site can be found at the following directory:
 
 ```
-/home/deployer/sites/mysite/backups
+/sites/mysite/backups
 ```
 
 ## Backups by email

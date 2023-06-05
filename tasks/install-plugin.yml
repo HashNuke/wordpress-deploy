@@ -2,13 +2,19 @@
   shell: "wp plugin is-installed {{plugin_name}} || echo not_installed"
   args:
     chdir: "{{ site_content_path }}"
+  become: yes
+  become_user: "www-data"
+
   register: wp_plugin_check
   changed_when: "'not_installed' in wp_plugin_check.stdout"
+
   tags: ["wp-plugins"]
 
 - name: Ensure the plugin is installed
   shell: "wp plugin install {{plugin_name}} --activate"
   args:
     chdir: "{{ site_content_path }}"
+  become: yes
+  become_user: "www-data"
   when: "'not_installed' in wp_plugin_check.stdout"
   tags: ["wp-plugins"]

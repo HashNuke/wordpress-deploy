@@ -1,6 +1,6 @@
 <?php
 $backups_path = "{{ site_backups_path }}";
-$server_user = "{{deploy_user}}@{{domain}}";
+$server_user = "{{ansible_user}}@{{domain}}";
 $site_name = "{{site_name}}";
 $mail_to = "{{ wordpress_admin_email }}";
 
