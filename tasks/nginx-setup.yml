@@ -22,7 +22,7 @@
 
 # certbot certonly --agree-tos -m test@example.com --nginx -d example.com -d www.example.com
 - name: Get letsencrypt certificate for domain
-  shell: "certbot certonly --agree-tos -m {{ wordpress_admin_email }} --nginx -d {{ domain }}"
+  shell: "certbot certonly --agree-tos --force-renewal -m {{ wordpress_admin_email }} --nginx -d {{ domain }} {{ '-d ' + redirect_domain if redirect_domain is defined else '' }}"
   args:
     creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
   become: "{{ requires_become }}"
