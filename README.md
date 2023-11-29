@@ -14,7 +14,7 @@ Use this to setup blogs for your family or landing pages for your side-projects.
 * 💪 Firewall protection with `ufw`
 * ⚡️ Pre-installs [WP Super Cache](https://wordpress.org/plugins/wp-super-cache/) for speed optimization
 * 🧪 Tested on [DigitalOcean](https://www.digitalocean.com/)
-* ⛑ Wordpress update email alerts *(👨‍💻 Coming soon)*
+* ⛑ Wordpress update email alerts
 * 👮‍♀️ Server monitoring with email alerts *(👨‍💻 Coming soon)*
 
 > You still need to enable disk backups with your cloud provider.
