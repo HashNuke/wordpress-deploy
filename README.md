@@ -27,17 +27,13 @@ Install python3 and clone this repository.
 git clone https://github.com/HashNuke/wordpress-deploy.git wordpress-deploy
 cd wordpress-deploy
 
-# Install pipenv
-pip3 install pipenv
-
-# Install python dependencies
-pipenv install
-
 # 👇👇👇 Start a python virtual environment
-pipenv shell
-
+python3 -m venv venv && source venv/bin/activate
 # 👆👆👆 Ensure to run the above command.
+
+# Install ansible. This project only needs ansible.
 # Else your terminal will not find the "ansible-playbook" command.
+pip3 install ansible
 ```
 
 ## Deploy a site
